@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>HCM Panel | Nóminas y Personal</title>
+    <style>
+        /* Diseño básico aprobado */
+        :root{--g:#176b55;--ink:#192f2a;--muted:#71817c;--line:#e4eae5;--bg:#f5f7f4;--white:#fff;--mint:#eaf4ee;--amber:#fff4df;--shadow:0 8px 26px #172c2808}
+        *{box-sizing:border-box}
+        body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+        .layout{min-height:100vh;display:grid;grid-template-columns:235px 1fr}
+        .side{background:#fff;border-right:1px solid var(--line);padding:23px 15px;display:flex;flex-direction:column}
+        .brand{display:flex;gap:10px;align-items:center;font-weight:750;font-size:16px;padding:0 9px 25px}
+        .logo{width:34px;height:34px;border-radius:11px;background:var(--g);color:white;display:grid;place-items:center}
+        .brand small{display:block;color:var(--muted);font-size:11px;font-weight:400}
+        .label{font-size:10px;color:#92a097;letter-spacing:1px;padding:8px 12px;text-transform:uppercase}
+        .nav{display:grid;gap:4px}
+        .nav button{border:0;background:transparent;text-align:left;padding:10px 12px;border-radius:9px;color:#60716a;cursor:pointer}
+        .nav button.active,.nav button:hover{background:var(--mint);color:var(--g);font-weight:650}
+        .main{min-width:0}
+        .top{height:66px;background:#ffffffcf;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 32px;color:var(--muted);font-size:12px}
+        .topright{display:flex;align-items:center;gap:9px}
+        .content{max-width:1400px;margin:auto;padding:29px 32px 45px}
+        .screen{display:none} .screen.active{display:block}
+        .heading{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
+        .eyebrow{font-size:10px;color:var(--g);font-weight:750;letter-spacing:.7px;text-transform:uppercase}
+        .heading h1{font-size:27px;letter-spacing:-.7px;margin:5px 0}
+        .sub{color:var(--muted);font-size:12px}
+        .actions{display:flex;gap:8px}
+        .btn{background:white;border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:11px;font-weight:650;cursor:pointer}
+        .btn.primary{background:var(--g);color:#fff;border-color:var(--g)}
+        .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:15px}
+        .card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:16px;overflow-x:auto;}
+        .mtitle{font-size:11px;color:var(--muted)}
+        .num{font-size:26px;font-weight:730;margin:10px 0 1px;letter-spacing:-.6px}
+        table{width:100%;border-collapse:collapse;text-align:left;white-space:nowrap;}
+        th{color:#8a9991;text-transform:uppercase;letter-spacing:.4px;font-size:9px;padding:8px;border-bottom:1px solid var(--line)}
+        td{font-size:11px;padding:9px 8px;border-bottom:1px solid #eef1ee}
+        .status{padding:4px 8px;border-radius:12px;font-size:9px;font-weight:bold}
+        .s-alta{background:var(--mint);color:#176b55}
+        .s-baja{background:#ffebe9;color:#d73a49}
+        .s-incapacidad{background:var(--amber);color:#b07d18}
+        
+        #loginPanel { display:none; position:fixed; inset:0; background:#f5f7f4; z-index:100; align-items:center; justify-content:center;}
+        .login-box { background: white; padding: 30px; border-radius: 12px; border: 1px solid var(--line); box-shadow: var(--shadow); width: 300px; text-align:center;}
+        .login-box input { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid var(--line); border-radius: 6px; font-size:13px;}
+        .login-box select { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid var(--line); border-radius: 6px; font-size:13px;}
+    </style>
+</head>
+<body>
+
+<!-- Login Panel Simulando Firebase Auth -->
+<div id="loginPanel">
+    <div class="login-box">
+        <div class="logo" style="margin: 0 auto 15px;">n</div>
+        <h2 style="margin-top:0;font-size:18px;">Acceso al Sistema</h2>
+        <input type="text" id="authEmail" placeholder="Usuario / Correo">
+        <input type="password" id="authPass" placeholder="Contraseña">
+        <button class="btn primary" style="width:100%" onclick="loginUser()">Iniciar Sesión</button>
+        <p style="font-size:10px; color:var(--muted); margin-top:10px">Usa el Super Usuario provisto para acceder a todo.</p>
+    </div>
+</div>
+
+<div class="layout">
+    <aside class="side">
+        <div class="brand"><span class="logo">n</span><span>Nómina<small>Panel Administrativo</small></span></div>
+        <div class="label">Módulos</div>
+        <nav class="nav" id="nav">
+            <button class="active" data-page="inicio">⌂ Resumen</button>
+            <button data-page="personal">♙ Personal y CSV</button>
+            <button data-page="nomina">▤ Generar Nómina</button>
+            <button data-page="vacaciones">☼ Vacaciones LFT</button>
+            <button data-page="reportes">▥ Reportes y Exportación</button>
+            <button data-page="admin" id="navAdmin" style="display:none;">⚙ Gestor de Usuarios</button>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <header class="top">
+            <span id="crumb">Resumen</span>
+            <div class="topright">
+                <span id="userRoleBadge" style="font-size:11px;font-weight:600;color:var(--g)"></span>
+                <button class="btn" onclick="logout()">Salir</button>
+            </div>
+        </header>
+        
+        <div class="content">
+            <!-- INICIO -->
+            <section id="inicio" class="screen active">
+                <div class="heading">
+                    <div><h1>Panel de Operaciones</h1><div class="sub">Indicadores de nómina y asistencia.</div></div>
+                </div>
+                <div class="metrics">
+                    <article class="card"><div class="mtitle">Empleados Activos</div><div class="num">24</div></article>
+                    <article class="card"><div class="mtitle">Incapacidades Actuales</div><div class="num">2</div></article>
+                    <article class="card"><div class="mtitle">Próximo Corte</div><div class="num">23 Oct</div></article>
+                    <article class="card"><div class="mtitle">Total Préstamos</div><div class="num">$12,400</div></article>
+                </div>
+            </section>
+
+            <!-- NÓMINA (VARIABLES COMPLETAS) -->
+            <section id="nomina" class="screen">
+                <div class="heading">
+                    <div><h1>Recibos de Nómina</h1><div class="sub">Cálculo con variables de Infonavit, Préstamos y Bonos por tipo de empleado.</div></div>
+                    <div class="actions">
+                        <button class="btn primary">Procesar Nómina</button>
+                    </div>
+                </div>
+                <article class="card">
+                    <table id="tablaNomina">
+                        <thead>
+                            <tr>
+                                <th>Empleado</th>
+                                <th>Rol</th>
+                                <th>Incidencias</th>
+                                <th>Sueldo Base</th>
+                                <th>Bono (Prod/Viaje)</th>
+                                <th>Desc. Infonavit</th>
+                                <th>Préstamo</th>
+                                <th>Faltas</th>
+                                <th>Total Neto</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Ejemplo de Inyección -->
+                            <tr>
+                                <td>Mario Gpe. Cruz</td>
+                                <td>Chofer</td>
+                                <td><span class="status s-alta">Alta</span></td>
+                                <td>$1,800.00</td>
+                                <td>$500.00 <small>(Viajes)</small></td>
+                                <td>$0.00</td>
+                                <td>-$200.00</td>
+                                <td>0</td>
+                                <td><b>$2,100.00</b></td>
+                            </tr>
+                            <tr>
+                                <td>Laura Martínez</td>
+                                <td>Administrativo</td>
+                                <td><span class="status s-incapacidad">Incapacidad</span></td>
+                                <td>$2,200.00</td>
+                                <td>$300.00 <small>(Desempeño)</small></td>
+                                <td>-$315.00</td>
+                                <td>$0.00</td>
+                                <td>1 (-$314.28)</td>
+                                <td><b>$1,870.72</b></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </article>
+            </section>
+
+            <!-- VACACIONES Y ASUETOS LFT -->
+            <section id="vacaciones" class="screen">
+                <div class="heading">
+                    <div><h1>Vacaciones y Días Libres</h1><div class="sub">Cálculo basado en LFT Mexicana por Antigüedad y Feriados.</div></div>
+                </div>
+                <div class="metrics">
+                    <article class="card" style="grid-column: span 2;">
+                        <h3>Días de Asueto Personalizados</h3>
+                        <p style="font-size:11px; color:var(--muted)">Los administradores pueden agregar asuetos extras además de los de la LFT (Ej: Día del empleado).</p>
+                        <input type="date" class="btn" id="nuevoAsuetoFecha">
+                        <input type="text" class="btn" placeholder="Motivo del asueto" id="nuevoAsuetoMotivo">
+                        <button class="btn primary">Agregar Día</button>
+                    </article>
+                </div>
+            </section>
+
+            <!-- REPORTES -->
+            <section id="reportes" class="screen">
+                <div class="heading">
+                    <div><h1>Reportes de Cortes</h1><div class="sub">Filtra la nómina por fecha o empleado y exporta a CSV de Firebase.</div></div>
+                    <button class="btn primary">↓ Exportar a CSV</button>
+                </div>
+                <article class="card" style="display:flex; gap:10px; align-items:center;">
+                    <label style="font-size:11px;font-weight:bold">Filtrar:</label>
+                    <input type="date" class="btn"> a <input type="date" class="btn">
+                    <input type="text" class="btn" placeholder="Nombre de Empleado">
+                    <button class="btn">Aplicar Filtro</button>
+                </article>
+            </section>
+        </div>
+    </main>
+</div>
+
+<!-- Lógica del Sistema -->
+<script type="module">
+    // ESPACIO PARA FIREBASE IMPORTS 
+    // import { initializeApp } from "firebase/app";
+    // import { getFirestore, collection, addDoc, getDocs, query, where } from "firebase/firestore";
+    // ...
+
+    // Control de UI Tabs
+    document.querySelectorAll('.nav button').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(e.target.dataset.page).classList.add('active');
+            e.target.classList.add('active');
+            document.getElementById('crumb').innerText = e.target.innerText;
+        });
+    });
+
+    window.onload = () => { document.getElementById('loginPanel').style.display = 'flex'; };
+
+    // Simulación de Login con Roles y SuperUser
+    window.loginUser = () => {
+        const pass = document.getElementById('authPass').value;
+        const email = document.getElementById('authEmail').value;
+
+        if (pass === 'compumundohypermegared') {
+            document.getElementById('loginPanel').style.display = 'none';
+            document.getElementById('userRoleBadge').innerText = 'SuperAdmin (Desarrollador)';
+            document.getElementById('navAdmin').style.display = 'block'; // Muestra gestor de usuarios
+        } else if (email.includes('admin')) {
+            document.getElementById('loginPanel').style.display = 'none';
+            document.getElementById('userRoleBadge').innerText = 'Admin (Acceso Total)';
+            document.getElementById('navAdmin').style.display = 'block';
+        } else if (email.includes('rh')) {
+            document.getElementById('loginPanel').style.display = 'none';
+            document.getElementById('userRoleBadge').innerText = 'Recursos Humanos (Operación)';
+        } else {
+            alert("Credenciales incorrectas. Usa el password 'compumundohypermegared' para pruebas.");
+        }
+    };
+
+    window.logout = () => {
+        document.getElementById('authPass').value = '';
+        document.getElementById('authEmail').value = '';
+        document.getElementById('loginPanel').style.display = 'flex';
+        document.getElementById('navAdmin').style.display = 'none';
+    };
+
+    // La función calcularVacacionesLFT(fechaIngreso) se integrará aquí con la tabla 2023 (12 días = 1 año, etc)
+</script>
+
+</body>
+</html>
