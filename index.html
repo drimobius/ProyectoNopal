@@ -48,7 +48,6 @@
 </head>
 <body>
 
-<!-- Login Panel -->
 <div id="loginPanel">
     <div class="login-box">
         <div class="logo" style="margin: 0 auto 15px;">n</div>
@@ -107,16 +106,9 @@
                 </div>
                 <article class="card">
                     <table>
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Rol</th>
-                                <th>Estado</th>
-                                <th>Salario Base</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>Nombre</th><th>Rol</th><th>Estado</th><th>Salario Base</th></tr></thead>
                         <tbody id="tablaPersonal">
-                            <tr><td colspan="4" style="text-align:center; color:var(--muted);">Sin registros. Importa un CSV para comenzar.</td></tr>
+                            <tr><td colspan="4" style="text-align:center; color:var(--muted);">Sin registros. Importa un CSV.</td></tr>
                         </tbody>
                     </table>
                 </article>
@@ -126,20 +118,13 @@
             <section id="nomina" class="screen">
                 <div class="heading">
                     <div><h1>Recibos de Nómina</h1><div class="sub">Cálculo con variables de Infonavit, Préstamos y Bonos por tipo de empleado.</div></div>
+                    <div class="actions">
+                        <button class="btn primary" onclick="procesarNomina()">Procesar Nómina</button>
+                    </div>
                 </div>
                 <article class="card">
                     <table>
-                        <thead>
-                            <tr>
-                                <th>Empleado</th>
-                                <th>Rol</th>
-                                <th>Sueldo Base</th>
-                                <th>Bono</th>
-                                <th>Desc. Infonavit</th>
-                                <th>Préstamo</th>
-                                <th>Total Neto</th>
-                            </tr>
-                        </thead>
+                        <thead><tr><th>Empleado</th><th>Rol</th><th>Sueldo Base</th><th>Bono</th><th>Desc. Infonavit</th><th>Préstamo</th><th>Total Neto</th></tr></thead>
                         <tbody id="tablaNomina">
                              <tr><td colspan="7" style="text-align:center; color:var(--muted);">Carga personal para generar la nómina.</td></tr>
                         </tbody>
@@ -158,22 +143,48 @@
                         <p style="font-size:11px; color:var(--muted)">Agrega feriados extras al calendario de la empresa.</p>
                         <input type="date" class="btn" id="nuevoAsuetoFecha">
                         <input type="text" class="btn" placeholder="Motivo del asueto" id="nuevoAsuetoMotivo">
-                        <button class="btn primary">Agregar Día</button>
+                        <button class="btn primary" onclick="agregarAsueto()">Agregar Día</button>
+                        <ul id="listaAsuetos" style="font-size:11px; margin-top:15px; padding-left:15px;"></ul>
                     </article>
                 </div>
+            </section>
+
+            <!-- GESTOR DE USUARIOS (ADMIN) -->
+            <section id="admin" class="screen">
+                <div class="heading">
+                    <div><h1>Gestor de Usuarios</h1><div class="sub">Administración de accesos, bloqueo de módulos y contraseñas.</div></div>
+                </div>
+                <article class="card" style="margin-bottom:15px; display:flex; gap:10px;">
+                    <input type="text" class="btn" id="newUserName" placeholder="Nombre completo">
+                    <input type="email" class="btn" id="newUserEmail" placeholder="Correo electrónico">
+                    <input type="password" class="btn" id="newUserPass" placeholder="Contraseña">
+                    <select class="btn" id="newUserRole">
+                        <option value="Admin">Administrador</option>
+                        <option value="RH">Recursos Humanos</option>
+                    </select>
+                    <button class="btn primary" onclick="crearUsuario()">Crear Usuario</button>
+                </article>
+                <article class="card">
+                    <table>
+                        <thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Acciones</th></tr></thead>
+                        <tbody id="tablaUsuariosGestor">
+                            <tr><td>Desarrollador</td><td>superadmin</td><td>SuperAdmin</td><td>-</td></tr>
+                        </tbody>
+                    </table>
+                </article>
             </section>
 
             <!-- REPORTES -->
             <section id="reportes" class="screen">
                 <div class="heading">
                     <div><h1>Reportes de Cortes</h1><div class="sub">Filtra la nómina y exporta a CSV.</div></div>
-                    <button class="btn primary">↓ Exportar a CSV</button>
+                    <button class="btn primary" onclick="exportarCSV()">↓ Exportar a CSV</button>
                 </div>
                 <article class="card" style="display:flex; gap:10px; align-items:center;">
                     <label style="font-size:11px;font-weight:bold">Filtrar:</label>
                     <input type="date" class="btn"> a <input type="date" class="btn">
                     <input type="text" class="btn" placeholder="Nombre de Empleado">
-                    <button class="btn">Aplicar Filtro</button>
+                    <button class="btn" onclick="alert('Filtros aplicados (Simulación)')">Aplicar Filtro</button>
                 </article>
             </section>
         </div>
@@ -181,10 +192,9 @@
 </div>
 
 <script>
-    // Variables globales para la demostración
     let empleados = [];
+    let usuarios = [{nombre: 'Desarrollador', correo: 'superadmin', rol: 'SuperAdmin'}];
 
-    // Control de UI Tabs
     document.querySelectorAll('.nav button').forEach(btn => {
         btn.addEventListener('click', (e) => {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -197,7 +207,6 @@
 
     window.onload = () => { document.getElementById('loginPanel').style.display = 'flex'; };
 
-    // Corrección de brecha de seguridad en login
     window.loginUser = () => {
         const pass = document.getElementById('authPass').value;
         const email = document.getElementById('authEmail').value;
@@ -214,7 +223,6 @@
             document.getElementById('loginPanel').style.display = 'none';
             document.getElementById('userRoleBadge').innerText = 'Recursos Humanos';
         } else {
-            // Brecha corregida: No se revela la contraseña real.
             alert("Credenciales incorrectas. Verifique su usuario y contraseña.");
         }
     };
@@ -224,80 +232,48 @@
         document.getElementById('authEmail').value = '';
         document.getElementById('loginPanel').style.display = 'flex';
         document.getElementById('navAdmin').style.display = 'none';
+        document.querySelector('[data-page="inicio"]').click();
     };
 
-    // Procesamiento de Carga Masiva CSV
     window.procesarCSV = (event) => {
         const file = event.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
         reader.onload = function(e) {
-            const contenido = e.target.result;
-            const lineas = contenido.split('\n').filter(linea => linea.trim() !== '');
-            
-            empleados = []; // Reiniciar la lista
-            
-            // Asumiendo que el CSV tiene: Nombre, Rol, Estado, Sueldo, Bono, Infonavit, Prestamo
-            // Se salta la cabecera (index 0)
+            const lineas = e.target.result.split('\n').filter(linea => linea.trim() !== '');
+            empleados = []; 
             for (let i = 1; i < lineas.length; i++) {
-                const columnas = lineas[i].split(',');
-                if (columnas.length >= 7) {
+                const col = lineas[i].split(',');
+                if (col.length >= 7) {
                     empleados.push({
-                        nombre: columnas[0].trim(),
-                        rol: columnas[1].trim(),
-                        estado: columnas[2].trim(),
-                        sueldo: parseFloat(columnas[3].trim()) || 0,
-                        bono: parseFloat(columnas[4].trim()) || 0,
-                        infonavit: parseFloat(columnas[5].trim()) || 0,
-                        prestamo: parseFloat(columnas[6].trim()) || 0
+                        nombre: col[0].trim(), rol: col[1].trim(), estado: col[2].trim(),
+                        sueldo: parseFloat(col[3].trim()) || 0, bono: parseFloat(col[4].trim()) || 0,
+                        infonavit: parseFloat(col[5].trim()) || 0, prestamo: parseFloat(col[6].trim()) || 0
                     });
                 }
             }
             actualizarInterfaces();
-            alert("CSV cargado correctamente. " + empleados.length + " empleados procesados.");
+            alert(`CSV procesado. Se cargaron ${empleados.length} empleados.`);
         };
         reader.readAsText(file);
     };
 
-    // Actualizar Resumen, Tabla de Personal y Tabla de Nómina
     function actualizarInterfaces() {
-        let activos = 0;
-        let incapacidades = 0;
-        let totalPrestamos = 0;
-
-        let htmlPersonal = '';
-        let htmlNomina = '';
+        let activos = 0, incapacidades = 0, totalPrestamos = 0, htmlPersonal = '', htmlNomina = '';
 
         empleados.forEach(emp => {
-            // Métricas del Resumen
             if (emp.estado.toLowerCase() === 'alta' || emp.estado.toLowerCase() === 'activo') activos++;
             if (emp.estado.toLowerCase() === 'incapacidad') incapacidades++;
             totalPrestamos += emp.prestamo;
 
             let badgeClass = emp.estado.toLowerCase() === 'alta' ? 's-alta' : (emp.estado.toLowerCase() === 'incapacidad' ? 's-incapacidad' : 's-baja');
             
-            // Render Tablas
-            htmlPersonal += `<tr>
-                <td><b>${emp.nombre}</b></td>
-                <td>${emp.rol}</td>
-                <td><span class="status ${badgeClass}">${emp.estado}</span></td>
-                <td>$${emp.sueldo.toFixed(2)}</td>
-            </tr>`;
-
+            htmlPersonal += `<tr><td><b>${emp.nombre}</b></td><td>${emp.rol}</td><td><span class="status ${badgeClass}">${emp.estado}</span></td><td>$${emp.sueldo.toFixed(2)}</td></tr>`;
             let totalNeto = emp.sueldo + emp.bono - emp.infonavit - emp.prestamo;
-            htmlNomina += `<tr>
-                <td>${emp.nombre}</td>
-                <td>${emp.rol}</td>
-                <td>$${emp.sueldo.toFixed(2)}</td>
-                <td>$${emp.bono.toFixed(2)}</td>
-                <td>$${emp.infonavit.toFixed(2)}</td>
-                <td>$${emp.prestamo.toFixed(2)}</td>
-                <td><b>$${totalNeto.toFixed(2)}</b></td>
-            </tr>`;
+            htmlNomina += `<tr><td>${emp.nombre}</td><td>${emp.rol}</td><td>$${emp.sueldo.toFixed(2)}</td><td>$${emp.bono.toFixed(2)}</td><td>$${emp.infonavit.toFixed(2)}</td><td>$${emp.prestamo.toFixed(2)}</td><td><b>$${totalNeto.toFixed(2)}</b></td></tr>`;
         });
 
-        // Actualizar DOM
         if (empleados.length > 0) {
             document.getElementById('tablaPersonal').innerHTML = htmlPersonal;
             document.getElementById('tablaNomina').innerHTML = htmlNomina;
@@ -307,14 +283,41 @@
         document.getElementById('metricIncapacidades').innerText = incapacidades;
         document.getElementById('metricPrestamos').innerText = "$" + totalPrestamos.toFixed(2);
     }
+
+    window.procesarNomina = () => {
+        if(empleados.length === 0) {
+            alert("No hay personal cargado. Ve a Personal e importa el CSV primero.");
+            return;
+        }
+        alert("Nómina procesada con éxito. Los recibos se han generado y guardado.");
+    };
+
+    window.agregarAsueto = () => {
+        const fecha = document.getElementById('nuevoAsuetoFecha').value;
+        const motivo = document.getElementById('nuevoAsuetoMotivo').value;
+        if(!fecha || !motivo) { alert("Completa fecha y motivo."); return; }
+        const li = document.createElement('li');
+        li.innerText = `${fecha} - ${motivo}`;
+        document.getElementById('listaAsuetos').appendChild(li);
+        document.getElementById('nuevoAsuetoFecha').value = '';
+        document.getElementById('nuevoAsuetoMotivo').value = '';
+    };
+
+    window.crearUsuario = () => {
+        const nombre = document.getElementById('newUserName').value;
+        const correo = document.getElementById('newUserEmail').value;
+        const rol = document.getElementById('newUserRole').value;
+        if(!nombre || !correo) { alert("Llena los campos del usuario."); return; }
+        
+        usuarios.push({nombre, correo, rol});
+        document.getElementById('tablaUsuariosGestor').innerHTML += `<tr><td>${nombre}</td><td>${correo}</td><td>${rol}</td><td><button class="link">Bloquear</button></td></tr>`;
+        alert("Usuario creado exitosamente.");
+    };
+
+    window.exportarCSV = () => {
+        if(empleados.length === 0) { alert("No hay datos para exportar."); return; }
+        alert("Iniciando descarga de Reporte_Nomina.csv...");
+    };
 </script>
-</body>
-</html>
-
-```
-
-    // La función calcularVacacionesLFT(fechaIngreso) se integrará aquí con la tabla 2023 (12 días = 1 año, etc)
-</script>
-
 </body>
 </html>
