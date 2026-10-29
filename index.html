@@ -1,4 +1,4 @@
-<!doctype html>
+<<!doctype html>
 <html lang="es">
 <head>
     <meta charset="utf-8">
@@ -27,8 +27,9 @@
         .heading h1{font-size:27px;letter-spacing:-.7px;margin:5px 0}
         .sub{color:var(--muted);font-size:12px}
         .actions{display:flex;gap:8px}
-        .btn{background:white;border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:11px;font-weight:650;cursor:pointer}
+        .btn{background:white;border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:11px;font-weight:650;cursor:pointer;transition: 0.2s;}
         .btn.primary{background:var(--g);color:#fff;border-color:var(--g)}
+        .btn:disabled{opacity: 0.6; cursor: not-allowed;}
         .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:15px}
         .card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:16px;overflow-x:auto;}
         .mtitle{font-size:11px;color:var(--muted)}
@@ -64,7 +65,7 @@
         <div class="label">Módulos</div>
         <nav class="nav" id="nav">
             <button class="active" data-page="inicio">⌂ Resumen</button>
-            <button data-page="personal">♙ Personal y CSV</button>
+            <button data-page="personal">♙ Personal y DB</button>
             <button data-page="nomina">▤ Generar Nómina</button>
             <button data-page="vacaciones">☼ Vacaciones LFT</button>
             <button data-page="reportes">▥ Reportes y Exportación</button>
@@ -95,11 +96,12 @@
                 </div>
             </section>
 
-            <!-- PERSONAL Y CARGA MASIVA CSV -->
+            <!-- PERSONAL Y CARGA -->
             <section id="personal" class="screen">
                 <div class="heading">
-                    <div><h1>Directorio de Personal</h1><div class="sub">Gestión de empleados e importación masiva por CSV.</div></div>
+                    <div><h1>Directorio de Personal</h1><div class="sub">Gestión de empleados e importación desde Base de Datos o CSV.</div></div>
                     <div class="actions">
+                        <button class="btn" id="btnSyncDb" onclick="sincronizarBaseDatos()" style="color: var(--g); border-color: var(--g);">↻ Sincronizar BD Google</button>
                         <input type="file" id="csvInput" accept=".csv" style="display:none;" onchange="procesarCSV(event)">
                         <button class="btn primary" onclick="document.getElementById('csvInput').click()">↑ Carga Masiva (CSV)</button>
                     </div>
@@ -108,7 +110,7 @@
                     <table>
                         <thead><tr><th>Nombre</th><th>Rol</th><th>Estado</th><th>Salario Base</th></tr></thead>
                         <tbody id="tablaPersonal">
-                            <tr><td colspan="4" style="text-align:center; color:var(--muted);">Sin registros. Importa un CSV.</td></tr>
+                            <tr><td colspan="4" style="text-align:center; color:var(--muted);">Sin registros. Sincroniza con Google Sheets o importa un CSV.</td></tr>
                         </tbody>
                     </table>
                 </article>
@@ -192,9 +194,13 @@
 </div>
 
 <script>
+    // URL DE LA API GENERADA POR GOOGLE APPS SCRIPT
+    const API_URL = "https://script.google.com/macros/s/AKfycbwnUVuyN3qhDcgbHVILtXTFiho_VgZ0TuiAkIrJXaxFc54-RzVtdDtiAo00u4xNZyg/exec";
+    
     let empleados = [];
     let usuarios = [{nombre: 'Desarrollador', correo: 'superadmin', rol: 'SuperAdmin'}];
 
+    // Navegación
     document.querySelectorAll('.nav button').forEach(btn => {
         btn.addEventListener('click', (e) => {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -207,23 +213,31 @@
 
     window.onload = () => { document.getElementById('loginPanel').style.display = 'flex'; };
 
+    // Login
     window.loginUser = () => {
         const pass = document.getElementById('authPass').value;
         const email = document.getElementById('authEmail').value;
+        let authSuccess = false;
 
         if (pass === 'compumundohypermegared') {
-            document.getElementById('loginPanel').style.display = 'none';
             document.getElementById('userRoleBadge').innerText = 'SuperAdmin';
             document.getElementById('navAdmin').style.display = 'block'; 
+            authSuccess = true;
         } else if (email.includes('admin') && pass !== '') {
-            document.getElementById('loginPanel').style.display = 'none';
             document.getElementById('userRoleBadge').innerText = 'Admin';
             document.getElementById('navAdmin').style.display = 'block';
+            authSuccess = true;
         } else if (email.includes('rh') && pass !== '') {
-            document.getElementById('loginPanel').style.display = 'none';
             document.getElementById('userRoleBadge').innerText = 'Recursos Humanos';
+            authSuccess = true;
         } else {
             alert("Credenciales incorrectas. Verifique su usuario y contraseña.");
+        }
+
+        if(authSuccess) {
+            document.getElementById('loginPanel').style.display = 'none';
+            // Al iniciar sesión, sincronizamos la base de datos automáticamente
+            sincronizarBaseDatos();
         }
     };
 
@@ -233,8 +247,52 @@
         document.getElementById('loginPanel').style.display = 'flex';
         document.getElementById('navAdmin').style.display = 'none';
         document.querySelector('[data-page="inicio"]').click();
+        empleados = [];
+        actualizarInterfaces();
     };
 
+    // FUNCIÓN PARA CONSUMIR DATOS DE GOOGLE SHEETS
+    window.sincronizarBaseDatos = async () => {
+        const btnSync = document.getElementById('btnSyncDb');
+        const textOriginal = btnSync.innerText;
+        btnSync.innerText = "Sincronizando...";
+        btnSync.disabled = true;
+
+        try {
+            // Traemos la tabla DB_Empleados desde tu Google Apps Script
+            const respuesta = await fetch(`${API_URL}?tabla=DB_Empleados`);
+            const datosJson = await respuesta.json();
+            
+            if (datosJson.error) {
+                alert("Error desde Google Sheets: " + datosJson.error);
+                return;
+            }
+
+            // Mapeamos los datos del Sheet (dimensiones relacionales) al formato de la UI
+            empleados = datosJson.map(fila => ({
+                nombre: fila.nombre_completo || fila.nombre || 'Sin Nombre',
+                rol: fila.rol || 'Empleado General',
+                estado: fila.estatus || fila.estado || 'Alta',
+                sueldo: parseFloat(fila.sueldo_base || fila.sueldo) || 0,
+                // Si la tabla de empleados no trae estos campos, los inicializamos en 0
+                // En un sistema completo, estos se traerían haciendo un fetch extra a DB_Historial_Nomina
+                bono: parseFloat(fila.bono) || 0,
+                infonavit: parseFloat(fila.infonavit) || 0,
+                prestamo: parseFloat(fila.descuento_hora || fila.prestamo) || 0 
+            }));
+
+            actualizarInterfaces();
+            
+        } catch (error) {
+            console.error("Error al sincronizar con Google Sheets:", error);
+            alert("No se pudo conectar con la Base de Datos. Verifica tu conexión.");
+        } finally {
+            btnSync.innerText = textOriginal;
+            btnSync.disabled = false;
+        }
+    };
+
+    // Funciones anteriores (CSV Fallback, UI, etc.)
     window.procesarCSV = (event) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -262,6 +320,15 @@
     function actualizarInterfaces() {
         let activos = 0, incapacidades = 0, totalPrestamos = 0, htmlPersonal = '', htmlNomina = '';
 
+        if(empleados.length === 0) {
+            document.getElementById('tablaPersonal').innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--muted);">Sin registros. Sincroniza con Google Sheets o importa un CSV.</td></tr>';
+            document.getElementById('tablaNomina').innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--muted);">Carga personal para generar la nómina.</td></tr>';
+            document.getElementById('metricPersonal').innerText = "0";
+            document.getElementById('metricIncapacidades').innerText = "0";
+            document.getElementById('metricPrestamos').innerText = "$0.00";
+            return;
+        }
+
         empleados.forEach(emp => {
             if (emp.estado.toLowerCase() === 'alta' || emp.estado.toLowerCase() === 'activo') activos++;
             if (emp.estado.toLowerCase() === 'incapacidad') incapacidades++;
@@ -274,10 +341,8 @@
             htmlNomina += `<tr><td>${emp.nombre}</td><td>${emp.rol}</td><td>$${emp.sueldo.toFixed(2)}</td><td>$${emp.bono.toFixed(2)}</td><td>$${emp.infonavit.toFixed(2)}</td><td>$${emp.prestamo.toFixed(2)}</td><td><b>$${totalNeto.toFixed(2)}</b></td></tr>`;
         });
 
-        if (empleados.length > 0) {
-            document.getElementById('tablaPersonal').innerHTML = htmlPersonal;
-            document.getElementById('tablaNomina').innerHTML = htmlNomina;
-        }
+        document.getElementById('tablaPersonal').innerHTML = htmlPersonal;
+        document.getElementById('tablaNomina').innerHTML = htmlNomina;
 
         document.getElementById('metricPersonal').innerText = activos;
         document.getElementById('metricIncapacidades').innerText = incapacidades;
@@ -286,7 +351,7 @@
 
     window.procesarNomina = () => {
         if(empleados.length === 0) {
-            alert("No hay personal cargado. Ve a Personal e importa el CSV primero.");
+            alert("No hay personal cargado. Sincroniza la Base de Datos o importa un CSV.");
             return;
         }
         alert("Nómina procesada con éxito. Los recibos se han generado y guardado.");
@@ -310,7 +375,7 @@
         if(!nombre || !correo) { alert("Llena los campos del usuario."); return; }
         
         usuarios.push({nombre, correo, rol});
-        document.getElementById('tablaUsuariosGestor').innerHTML += `<tr><td>${nombre}</td><td>${correo}</td><td>${rol}</td><td><button class="link">Bloquear</button></td></tr>`;
+        document.getElementById('tablaUsuariosGestor').innerHTML += `<tr><td>${nombre}</td><td>${correo}</td><td>${rol}</td><td><button class="btn">Bloquear</button></td></tr>`;
         alert("Usuario creado exitosamente.");
     };
 
