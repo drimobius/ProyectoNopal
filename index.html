@@ -1,388 +1,1827 @@
-<<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>HCM Panel | Nóminas y Personal</title>
-    <style>
-        :root{--g:#176b55;--ink:#192f2a;--muted:#71817c;--line:#e4eae5;--bg:#f5f7f4;--white:#fff;--mint:#eaf4ee;--amber:#fff4df;--shadow:0 8px 26px #172c2808}
-        *{box-sizing:border-box}
-        body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-        .layout{min-height:100vh;display:grid;grid-template-columns:235px 1fr}
-        .side{background:#fff;border-right:1px solid var(--line);padding:23px 15px;display:flex;flex-direction:column}
-        .brand{display:flex;gap:10px;align-items:center;font-weight:750;font-size:16px;padding:0 9px 25px}
-        .logo{width:34px;height:34px;border-radius:11px;background:var(--g);color:white;display:grid;place-items:center}
-        .brand small{display:block;color:var(--muted);font-size:11px;font-weight:400}
-        .label{font-size:10px;color:#92a097;letter-spacing:1px;padding:8px 12px;text-transform:uppercase}
-        .nav{display:grid;gap:4px}
-        .nav button{border:0;background:transparent;text-align:left;padding:10px 12px;border-radius:9px;color:#60716a;cursor:pointer}
-        .nav button.active,.nav button:hover{background:var(--mint);color:var(--g);font-weight:650}
-        .main{min-width:0}
-        .top{height:66px;background:#ffffffcf;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 32px;color:var(--muted);font-size:12px}
-        .topright{display:flex;align-items:center;gap:9px}
-        .content{max-width:1400px;margin:auto;padding:29px 32px 45px}
-        .screen{display:none} .screen.active{display:block}
-        .heading{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px}
-        .eyebrow{font-size:10px;color:var(--g);font-weight:750;letter-spacing:.7px;text-transform:uppercase}
-        .heading h1{font-size:27px;letter-spacing:-.7px;margin:5px 0}
-        .sub{color:var(--muted);font-size:12px}
-        .actions{display:flex;gap:8px}
-        .btn{background:white;border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:11px;font-weight:650;cursor:pointer;transition: 0.2s;}
-        .btn.primary{background:var(--g);color:#fff;border-color:var(--g)}
-        .btn:disabled{opacity: 0.6; cursor: not-allowed;}
-        .metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:15px}
-        .card{background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:16px;overflow-x:auto;}
-        .mtitle{font-size:11px;color:var(--muted)}
-        .num{font-size:26px;font-weight:730;margin:10px 0 1px;letter-spacing:-.6px}
-        table{width:100%;border-collapse:collapse;text-align:left;white-space:nowrap;}
-        th{color:#8a9991;text-transform:uppercase;letter-spacing:.4px;font-size:9px;padding:8px;border-bottom:1px solid var(--line)}
-        td{font-size:11px;padding:9px 8px;border-bottom:1px solid #eef1ee}
-        .status{padding:4px 8px;border-radius:12px;font-size:9px;font-weight:bold}
-        .s-alta{background:var(--mint);color:#176b55}
-        .s-baja{background:#ffebe9;color:#d73a49}
-        .s-incapacidad{background:var(--amber);color:#b07d18}
-        
-        #loginPanel { display:none; position:fixed; inset:0; background:#f5f7f4; z-index:100; align-items:center; justify-content:center;}
-        .login-box { background: white; padding: 30px; border-radius: 12px; border: 1px solid var(--line); box-shadow: var(--shadow); width: 300px; text-align:center;}
-        .login-box input { width: 100%; padding: 10px; margin-bottom: 12px; border: 1px solid var(--line); border-radius: 6px; font-size:13px;}
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ARGUE MATERIALES S.A. DE C.V. | Sistema Integral de Nóminas e Incidencias</title>
+  <style>
+    :root {
+      --bg-main: #0f172a;
+      --bg-card: #1e293b;
+      --bg-input: #0b1120;
+      --border: #334155;
+      --primary: #f59e0b;
+      --primary-hover: #d97706;
+      --secondary: #3b82f6;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #eab308;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --radius: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body { background-color: var(--bg-main); color: var(--text-main); display: flex; min-height: 100vh; }
+
+    /* LOGIN SCREEN */
+    #loginOverlay {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.96); z-index: 9999;
+      display: flex; align-items: center; justify-content: center; padding: 20px;
+    }
+    .login-box {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
+      padding: 36px; width: 100%; max-width: 440px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6);
+    }
+    .login-box h1 { font-size: 1.4rem; color: var(--primary); margin-bottom: 4px; text-align: center; }
+    .login-box p { color: var(--text-muted); font-size: 0.88rem; text-align: center; margin-bottom: 24px; }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 260px; background: var(--bg-card); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; padding: 20px 14px; flex-shrink: 0;
+    }
+    .brand { padding: 0 10px 20px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+    .brand h2 { font-size: 1.05rem; color: var(--primary); letter-spacing: 0.5px; }
+    .brand span { font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 2px; }
+    .role-pill {
+      display: inline-block; margin-top: 8px; padding: 3px 10px; border-radius: 999px;
+      font-size: 0.72rem; font-weight: 600; background: rgba(245, 158, 11, 0.15); color: var(--primary);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .nav-menu { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .nav-btn {
+      background: transparent; border: none; color: var(--text-muted); text-align: left;
+      padding: 11px 14px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 500;
+      display: flex; align-items: center; gap: 10px; transition: all 0.2s;
+    }
+    .nav-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
+    .nav-btn.active { background: var(--primary); color: #0f172a; font-weight: 700; }
+
+    /* MAIN CONTENT */
+    .main-wrapper { flex: 1; display: flex; flex-direction: column; overflow-x: hidden; }
+    .topbar {
+      height: 64px; background: var(--bg-card); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; padding: 0 28px;
+    }
+    .topbar-title { font-size: 1.1rem; font-weight: 600; }
+    .sync-status { font-size: 0.8rem; color: var(--success); display: flex; align-items: center; gap: 6px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); }
+
+    .content { padding: 28px; max-width: 1440px; width: 100%; margin: 0 auto; }
+    .screen { display: none; animation: fadeIn 0.2s ease; }
+    .screen.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* CARDS & GRIDS */
+    .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-bottom: 24px; }
+    .kpi-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px;
+    }
+    .kpi-card .label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .kpi-card .value { font-size: 1.7rem; font-weight: 700; margin-top: 8px; color: var(--text-main); }
+
+    .card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 22px; margin-bottom: 22px;
+    }
+    .card-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px;
+      padding-bottom: 12px; border-bottom: 1px solid var(--border); flex-wrap: wrap; gap: 10px;
+    }
+    .card-header h3 { font-size: 1.05rem; color: var(--primary); }
+
+    /* FORMS */
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+    input, select, textarea {
+      background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main);
+      padding: 10px 12px; border-radius: 8px; font-size: 0.9rem; outline: none; transition: border 0.2s;
+    }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); }
+    input[readonly] { opacity: 0.75; cursor: not-allowed; }
+
+    /* BUTTONS */
+    .btn {
+      padding: 10px 16px; border-radius: 8px; border: none; font-size: 0.88rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-primary { background: var(--primary); color: #0f172a; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary { background: var(--secondary); color: #fff; }
+    .btn-secondary:hover { opacity: 0.9; }
+    .btn-success { background: var(--success); color: #0f172a; }
+    .btn-danger { background: var(--danger); color: #fff; }
+    .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-sm { padding: 6px 10px; font-size: 0.78rem; }
+
+    /* TABLES */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+    th { color: var(--text-muted); font-weight: 600; background: rgba(15, 23, 42, 0.5); white-space: nowrap; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+
+    .badge {
+      padding: 3px 9px; border-radius: 999px; font-size: 0.74rem; font-weight: 600; display: inline-block;
+    }
+    .badge-alta { background: rgba(16, 185, 129, 0.15); color: var(--success); }
+    .badge-baja { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+    .badge-warn { background: rgba(245, 158, 11, 0.15); color: var(--primary); }
+    .badge-info { background: rgba(59, 130, 246, 0.15); color: var(--secondary); }
+
+    .alert-box {
+      background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3);
+      padding: 12px 16px; border-radius: 8px; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 16px;
+    }
+
+    .editable-cell {
+      width: 95px; padding: 5px 8px; font-size: 0.84rem; text-align: right;
+    }
+
+    /* RECIBO DE NOMINA IMPRIMIBLE */
+    .recibo-paper {
+      background: #ffffff; color: #0f172a; padding: 36px; border-radius: 8px;
+      max-width: 820px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+    .recibo-header {
+      display: flex; justify-content: space-between; border-bottom: 2px solid #0f172a;
+      padding-bottom: 14px; margin-bottom: 18px;
+    }
+    .recibo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.85rem; margin-bottom: 20px; }
+    .recibo-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.86rem; }
+    .recibo-table th { background: #e2e8f0; color: #0f172a; padding: 8px 10px; border: 1px solid #cbd5e1; }
+    .recibo-table td { padding: 8px 10px; border: 1px solid #cbd5e1; color: #0f172a; }
+    .recibo-footer { margin-top: 40px; display: flex; justify-content: space-between; text-align: center; font-size: 0.82rem; }
+    .firma-line { width: 240px; border-top: 1px solid #0f172a; padding-top: 6px; }
+
+    @media print {
+      body * { visibility: hidden; }
+      #reciboPrintArea, #reciboPrintArea * { visibility: visible; }
+      #reciboPrintArea { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; }
+    }
+  </style>
 </head>
 <body>
 
-<div id="loginPanel">
+  <!-- OVERLAY DE LOGIN -->
+  <div id="loginOverlay">
     <div class="login-box">
-        <div class="logo" style="margin: 0 auto 15px;">n</div>
-        <h2 style="margin-top:0;font-size:18px;">Acceso al Sistema</h2>
-        <input type="text" id="authEmail" placeholder="Usuario / Correo">
-        <input type="password" id="authPass" placeholder="Contraseña">
-        <button class="btn primary" style="width:100%" onclick="loginUser()">Iniciar Sesión</button>
+      <h1>ARGUE MATERIALES S.A. DE C.V.</h1>
+      <p>Sistema Integral de Control de Nóminas, Bonos e Incidencias</p>
+      <div class="form-group" style="margin-bottom: 14px;">
+        <label>Usuario / Correo</label>
+        <input type="text" id="loginUser" placeholder="ej. dueno@argue.com">
+      </div>
+      <div class="form-group" style="margin-bottom: 20px;">
+        <label>Contraseña</label>
+        <input type="password" id="loginPass" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary" style="width: 100%; margin-bottom: 12px;" onclick="iniciarSesion()">Ingresar al Sistema</button>
+      <button class="btn btn-outline btn-sm" style="width: 100%;" onclick="inicializarFirebaseBase()">Inicializar Base de Datos en Firebase (Primera vez)</button>
+      <p id="loginMsg" style="margin-top: 12px; font-size: 0.8rem; color: var(--warning);"></p>
     </div>
-</div>
+  </div>
 
-<div class="layout">
-    <aside class="side">
-        <div class="brand"><span class="logo">n</span><span>Nómina<small>Panel Administrativo</small></span></div>
-        <div class="label">Módulos</div>
-        <nav class="nav" id="nav">
-            <button class="active" data-page="inicio">⌂ Resumen</button>
-            <button data-page="personal">♙ Personal y DB</button>
-            <button data-page="nomina">▤ Generar Nómina</button>
-            <button data-page="vacaciones">☼ Vacaciones LFT</button>
-            <button data-page="reportes">▥ Reportes y Exportación</button>
-            <button data-page="admin" id="navAdmin" style="display:none;">⚙ Gestor de Usuarios</button>
-        </nav>
-    </aside>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <h2>ARGUE MATERIALES</h2>
+      <span>S.A. DE C.V. • Nómina MX</span>
+      <div class="role-pill" id="badgeRolActual">Rol</div>
+    </div>
 
-    <main class="main">
-        <header class="top">
-            <span id="crumb">Resumen</span>
-            <div class="topright">
-                <span id="userRoleBadge" style="font-size:11px;font-weight:600;color:var(--g)"></span>
-                <button class="btn" onclick="logout()">Salir</button>
-            </div>
-        </header>
-        
-        <div class="content">
-            <!-- INICIO / RESUMEN -->
-            <section id="inicio" class="screen active">
-                <div class="heading">
-                    <div><h1>Panel de Operaciones</h1><div class="sub">Indicadores actualizados de nómina y asistencia.</div></div>
-                </div>
-                <div class="metrics">
-                    <article class="card"><div class="mtitle">Empleados Activos</div><div class="num" id="metricPersonal">0</div></article>
-                    <article class="card"><div class="mtitle">Incapacidades Actuales</div><div class="num" id="metricIncapacidades">0</div></article>
-                    <article class="card"><div class="mtitle">Próximo Corte</div><div class="num">23 Oct</div></article>
-                    <article class="card"><div class="mtitle">Total Préstamos</div><div class="num" id="metricPrestamos">$0</div></article>
-                </div>
-            </section>
+    <nav class="nav-menu" id="navMenu">
+      <button class="nav-btn active" data-tab="dashboard" data-roles="SuperAdmin,Admin,RH">📊 Resumen General</button>
+      <button class="nav-btn" data-tab="empleados" data-roles="SuperAdmin,Admin,RH">👷 Alta y Plantilla</button>
+      <button class="nav-btn" data-tab="bonos" data-roles="SuperAdmin,Admin,RH">🚛 Bonos Semanales</button>
+      <button class="nav-btn" data-tab="prestamos" data-roles="SuperAdmin,Admin,RH,Operativo">💸 Préstamos y Adelantos</button>
+      <button class="nav-btn" data-tab="incidencias" data-roles="SuperAdmin,Admin,RH">📅 Incidencias y Vacaciones</button>
+      <button class="nav-btn" data-tab="nomina" data-roles="SuperAdmin,Admin,RH">💰 Cálculo de Nómina</button>
+      <button class="nav-btn" data-tab="recibos" data-roles="SuperAdmin,Admin,RH,Operativo">🧾 Recibos de Nómina</button>
+      <button class="nav-btn" data-tab="calculadora" data-roles="SuperAdmin,Admin,RH">🧮 Calculadora Fiscal MX</button>
+      <button class="nav-btn" data-tab="configuracion" data-roles="SuperAdmin,Admin">⚙️ Configuración y Usuarios</button>
+    </nav>
 
-            <!-- PERSONAL Y CARGA -->
-            <section id="personal" class="screen">
-                <div class="heading">
-                    <div><h1>Directorio de Personal</h1><div class="sub">Gestión de empleados e importación desde Base de Datos o CSV.</div></div>
-                    <div class="actions">
-                        <button class="btn" id="btnSyncDb" onclick="sincronizarBaseDatos()" style="color: var(--g); border-color: var(--g);">↻ Sincronizar BD Google</button>
-                        <input type="file" id="csvInput" accept=".csv" style="display:none;" onchange="procesarCSV(event)">
-                        <button class="btn primary" onclick="document.getElementById('csvInput').click()">↑ Carga Masiva (CSV)</button>
-                    </div>
-                </div>
-                <article class="card">
-                    <table>
-                        <thead><tr><th>Nombre</th><th>Rol</th><th>Estado</th><th>Salario Base</th></tr></thead>
-                        <tbody id="tablaPersonal">
-                            <tr><td colspan="4" style="text-align:center; color:var(--muted);">Sin registros. Sincroniza con Google Sheets o importa un CSV.</td></tr>
-                        </tbody>
-                    </table>
-                </article>
-            </section>
+    <div style="padding-top: 14px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px;">
+      <button class="btn btn-outline btn-sm" onclick="cargarTodoDesdeFirebase()">🔄 Sincronizar Firebase</button>
+      <button class="btn btn-danger btn-sm" onclick="cerrarSesion()">Cerrar Sesión</button>
+    </div>
+  </aside>
 
-            <!-- NÓMINA -->
-            <section id="nomina" class="screen">
-                <div class="heading">
-                    <div><h1>Recibos de Nómina</h1><div class="sub">Cálculo con variables de Infonavit, Préstamos y Bonos por tipo de empleado.</div></div>
-                    <div class="actions">
-                        <button class="btn primary" onclick="procesarNomina()">Procesar Nómina</button>
-                    </div>
-                </div>
-                <article class="card">
-                    <table>
-                        <thead><tr><th>Empleado</th><th>Rol</th><th>Sueldo Base</th><th>Bono</th><th>Desc. Infonavit</th><th>Préstamo</th><th>Total Neto</th></tr></thead>
-                        <tbody id="tablaNomina">
-                             <tr><td colspan="7" style="text-align:center; color:var(--muted);">Carga personal para generar la nómina.</td></tr>
-                        </tbody>
-                    </table>
-                </article>
-            </section>
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div class="topbar-title" id="topbarTitle">Resumen General</div>
+      <div class="sync-status">
+        <span class="dot"></span>
+        <span id="syncLabel">Conectado a Firebase Realtime DB</span>
+      </div>
+    </header>
 
-            <!-- VACACIONES -->
-            <section id="vacaciones" class="screen">
-                <div class="heading">
-                    <div><h1>Vacaciones y Días Libres</h1><div class="sub">Gestión de asuetos personalizados y días de ley.</div></div>
-                </div>
-                <div class="metrics">
-                    <article class="card" style="grid-column: span 2;">
-                        <h3>Días de Asueto Personalizados</h3>
-                        <p style="font-size:11px; color:var(--muted)">Agrega feriados extras al calendario de la empresa.</p>
-                        <input type="date" class="btn" id="nuevoAsuetoFecha">
-                        <input type="text" class="btn" placeholder="Motivo del asueto" id="nuevoAsuetoMotivo">
-                        <button class="btn primary" onclick="agregarAsueto()">Agregar Día</button>
-                        <ul id="listaAsuetos" style="font-size:11px; margin-top:15px; padding-left:15px;"></ul>
-                    </article>
-                </div>
-            </section>
+    <main class="content">
 
-            <!-- GESTOR DE USUARIOS (ADMIN) -->
-            <section id="admin" class="screen">
-                <div class="heading">
-                    <div><h1>Gestor de Usuarios</h1><div class="sub">Administración de accesos, bloqueo de módulos y contraseñas.</div></div>
-                </div>
-                <article class="card" style="margin-bottom:15px; display:flex; gap:10px;">
-                    <input type="text" class="btn" id="newUserName" placeholder="Nombre completo">
-                    <input type="email" class="btn" id="newUserEmail" placeholder="Correo electrónico">
-                    <input type="password" class="btn" id="newUserPass" placeholder="Contraseña">
-                    <select class="btn" id="newUserRole">
-                        <option value="Admin">Administrador</option>
-                        <option value="RH">Recursos Humanos</option>
-                    </select>
-                    <button class="btn primary" onclick="crearUsuario()">Crear Usuario</button>
-                </article>
-                <article class="card">
-                    <table>
-                        <thead><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Acciones</th></tr></thead>
-                        <tbody id="tablaUsuariosGestor">
-                            <tr><td>Desarrollador</td><td>superadmin</td><td>SuperAdmin</td><td>-</td></tr>
-                        </tbody>
-                    </table>
-                </article>
-            </section>
-
-            <!-- REPORTES -->
-            <section id="reportes" class="screen">
-                <div class="heading">
-                    <div><h1>Reportes de Cortes</h1><div class="sub">Filtra la nómina y exporta a CSV.</div></div>
-                    <button class="btn primary" onclick="exportarCSV()">↓ Exportar a CSV</button>
-                </div>
-                <article class="card" style="display:flex; gap:10px; align-items:center;">
-                    <label style="font-size:11px;font-weight:bold">Filtrar:</label>
-                    <input type="date" class="btn"> a <input type="date" class="btn">
-                    <input type="text" class="btn" placeholder="Nombre de Empleado">
-                    <button class="btn" onclick="alert('Filtros aplicados (Simulación)')">Aplicar Filtro</button>
-                </article>
-            </section>
+      <!-- 1. DASHBOARD -->
+      <section id="tab-dashboard" class="screen active">
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="label">Empleados Activos</div>
+            <div class="value" id="kpiActivos">0</div>
+          </div>
+          <div class="kpi-card">
+            <div class="label">Nómina Semanal Base</div>
+            <div class="value" id="kpiNominaBase">$0.00</div>
+          </div>
+          <div class="kpi-card">
+            <div class="label">Saldo Activo Préstamos</div>
+            <div class="value" id="kpiPrestamos">$0.00</div>
+          </div>
+          <div class="kpi-card">
+            <div class="label">Incidencias Semana Actual</div>
+            <div class="value" id="kpiIncidencias">0</div>
+          </div>
         </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Historial de Nóminas Cerradas</h3>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Año / Semana</th>
+                  <th>Fecha Cierre</th>
+                  <th>Empleados Pagados</th>
+                  <th>Total Percepciones</th>
+                  <th>Total Deducciones</th>
+                  <th>Neto Pagado</th>
+                </tr>
+              </thead>
+              <tbody id="tablaHistorialNominas"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. ALTA DE EMPLEADOS Y PLANTILLA -->
+      <section id="tab-empleados" class="screen">
+        <div class="card">
+          <div class="card-header">
+            <h3>Registro / Edición de Empleado</h3>
+            <div style="display: flex; gap: 8px;">
+              <input type="text" id="nuevoTipoEmpInput" placeholder="Nuevo tipo de empleado..." style="padding: 6px 10px; font-size: 0.82rem;">
+              <button class="btn btn-secondary btn-sm" onclick="agregarTipoEmpleado()">+ Crear Tipo Empleado</button>
+            </div>
+          </div>
+
+          <form id="formEmpleado" onsubmit="guardarEmpleado(event)">
+            <input type="hidden" id="empEditKey">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Número de Empleado (Nómina) *</label>
+                <input type="number" id="empNumero" required placeholder="Ej. 201">
+              </div>
+              <div class="form-group">
+                <label>Nombre Completo *</label>
+                <input type="text" id="empNombre" required placeholder="Apellidos y Nombres">
+              </div>
+              <div class="form-group">
+                <label>Fecha de Nacimiento *</label>
+                <input type="date" id="empNacimiento" required>
+              </div>
+              <div class="form-group">
+                <label>Fecha de Ingreso *</label>
+                <input type="date" id="empIngreso" required>
+              </div>
+              <div class="form-group">
+                <label>Fecha de Baja (Opcional)</label>
+                <input type="date" id="empBaja">
+              </div>
+              <div class="form-group">
+                <label>CURP *</label>
+                <input type="text" id="empCurp" maxlength="18" required style="text-transform: uppercase;">
+              </div>
+              <div class="form-group">
+                <label>NSS (IMSS) *</label>
+                <input type="text" id="empNss" maxlength="11" required>
+              </div>
+              <div class="form-group">
+                <label>RFC *</label>
+                <input type="text" id="empRfc" maxlength="13" required style="text-transform: uppercase;">
+              </div>
+              <div class="form-group">
+                <label>Dirección Completa *</label>
+                <input type="text" id="empDireccion" required>
+              </div>
+              <div class="form-group">
+                <label>Estado *</label>
+                <select id="empEstado" required>
+                  <option value="Alta">Alta (Activo)</option>
+                  <option value="Incapacidad">Incapacidad</option>
+                  <option value="Baja">Baja</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Puesto *</label>
+                <input type="text" id="empPuesto" required placeholder="Ej. Operador Tortón">
+              </div>
+              <div class="form-group">
+                <label>Jefe Directo *</label>
+                <input type="text" id="empJefe" required>
+              </div>
+              <div class="form-group">
+                <label>Tipo de Empleado *</label>
+                <select id="empTipo" required></select>
+              </div>
+              <div class="form-group">
+                <label>Esquema de Bono Asignado *</label>
+                <select id="empEsquemaBono" required>
+                  <option value="CHOFERES">Choferes (Viajes > 5 * $120)</option>
+                  <option value="GERENTE">Gerente ((Viajes * 50 - 100) * 2)</option>
+                  <option value="ADMINISTRATIVO">Administrativo (Viajes * 50 - 100)</option>
+                  <option value="RH">Recursos Humanos ((Viajes * 50 - 100) * 1.5)</option>
+                  <option value="NINGUNO">Sin Bono</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Jornada Laboral *</label>
+                <select id="empJornada" required>
+                  <option value="Diurna (8 hrs)">Diurna (8 hrs)</option>
+                  <option value="Mixta (7.5 hrs)">Mixta (7.5 hrs)</option>
+                  <option value="Nocturna (7 hrs)">Nocturna (7 hrs)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Días Laborados / Semana *</label>
+                <input type="number" id="empDiasSem" value="6" min="1" max="7" required>
+              </div>
+              <div class="form-group">
+                <label>Sueldo Mensual Bruto (MXN) *</label>
+                <input type="number" step="0.01" id="empSueldoMensual" required oninput="recalcularSalariosAlta()">
+              </div>
+              <div class="form-group">
+                <label>Salario Diario (Mensual / 30.4)</label>
+                <input type="number" step="0.01" id="empSalarioDiario" readonly>
+              </div>
+              <div class="form-group">
+                <label>Sueldo Base Semanal (Diario * 7)</label>
+                <input type="number" step="0.01" id="empSueldoSemanal" readonly>
+              </div>
+              <div class="form-group">
+                <label>ISR Semanal Fijo (MXN)</label>
+                <input type="number" step="0.01" id="empIsr" value="0">
+              </div>
+              <div class="form-group">
+                <label>IMSS Semanal Fijo (MXN)</label>
+                <input type="number" step="0.01" id="empImss" value="0">
+              </div>
+              <div class="form-group">
+                <label>INFONAVIT Semanal Fijo (MXN)</label>
+                <input type="number" step="0.01" id="empInfonavit" value="0">
+              </div>
+            </div>
+
+            <div style="margin-top: 18px; display: flex; gap: 10px;">
+              <button type="submit" class="btn btn-primary">💾 Guardar Empleado en Firebase</button>
+              <button type="button" class="btn btn-outline" onclick="limpiarFormEmpleado()">Limpiar Formulario</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Plantilla de Empleados Registrados</h3>
+            <input type="text" id="buscarEmpInput" placeholder="Buscar por # nómina o nombre..." onkeyup="renderTablaEmpleados()">
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th># Emp</th>
+                  <th>Nombre Completo</th>
+                  <th>Puesto / Tipo</th>
+                  <th>Esquema Bono</th>
+                  <th>Antigüedad / Vac. LFT</th>
+                  <th>Sueldo Mensual</th>
+                  <th>Base Semanal (7d)</th>
+                  <th>Estatus</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="tablaEmpleadosBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. BONOS SEMANALES -->
+      <section id="tab-bonos" class="screen">
+        <div class="card">
+          <div class="card-header">
+            <h3>Registro y Cálculo Automático de Bonos por Viajes / Camiones</h3>
+          </div>
+          <div class="alert-box">
+            <strong>Reglas activas:</strong> El cálculo toma automáticamente el esquema asignado al empleado (Choferes, Gerente, Administrativo o RH) y los parámetros configurables en tiempo real. Todos los cálculos quedan guardados en el historial.
+          </div>
+
+          <form onsubmit="registrarBonoSemanal(event)">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Número de Empleado *</label>
+                <select id="bonoEmpSelect" required onchange="actualizarPreviewBono()"></select>
+              </div>
+              <div class="form-group">
+                <label>Año *</label>
+                <input type="number" id="bonoAnio" value="2026" required>
+              </div>
+              <div class="form-group">
+                <label>Semana del Año (1-53) *</label>
+                <input type="number" id="bonoSemana" min="1" max="53" required>
+              </div>
+              <div class="form-group">
+                <label>Viajes Realizados / Camiones Recibidos *</label>
+                <input type="number" id="bonoViajes" min="0" required oninput="actualizarPreviewBono()">
+              </div>
+              <div class="form-group">
+                <label>Categoría Detectada</label>
+                <input type="text" id="bonoCategoriaPreview" readonly>
+              </div>
+              <div class="form-group">
+                <label>Bono Calculado (MXN)</label>
+                <input type="text" id="bonoMontoPreview" readonly style="font-weight: 700; color: var(--success);">
+              </div>
+            </div>
+            <div style="margin-top: 16px;">
+              <button type="submit" class="btn btn-primary">✅ Guardar Bono en Historial</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Historial de Bonos Calculados</h3>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Año / Semana</th>
+                  <th># Emp</th>
+                  <th>Empleado</th>
+                  <th>Categoría Bono</th>
+                  <th>Viajes / Camiones</th>
+                  <th>Bono Calculado</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="tablaBonosBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. PRÉSTAMOS Y ADELANTOS (ACCESO OPERATIVO SIN SUELDOS) -->
+      <section id="tab-prestamos" class="screen">
+        <div class="card">
+          <div class="card-header">
+            <h3>Registro de Préstamos y Adelantos de Nómina</h3>
+          </div>
+          <form onsubmit="registrarPrestamo(event)">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Número de Empleado *</label>
+                <select id="prestamoEmpSelect" required></select>
+              </div>
+              <div class="form-group">
+                <label>Tipo de Préstamo *</label>
+                <select id="prestamoTipo" required onchange="ajustarCamposPrestamo()">
+                  <option value="Adelanto Semanal">Adelanto Semanal (Descuento 100% siguiente nómina)</option>
+                  <option value="Convencional">Préstamo Convencional (A plazos semanales)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Monto Total Solicitado (MXN) *</label>
+                <input type="number" step="0.01" id="prestamoTotal" required oninput="calcularDescuentoPrestamo()">
+              </div>
+              <div class="form-group">
+                <label>Semanas a Liquidar *</label>
+                <input type="number" id="prestamoSemanas" value="1" min="1" required oninput="calcularDescuentoPrestamo()">
+              </div>
+              <div class="form-group">
+                <label>Descuento Semanal (MXN) *</label>
+                <input type="number" step="0.01" id="prestamoDescuentoSem" required>
+              </div>
+              <div class="form-group">
+                <label>Fecha de Solicitud *</label>
+                <input type="date" id="prestamoFecha" required>
+              </div>
+            </div>
+            <div style="margin-top: 16px;">
+              <button type="submit" class="btn btn-primary">💸 Registrar Préstamo</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Control de Préstamos Activos e Historial</h3>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th># Emp</th>
+                  <th>Empleado</th>
+                  <th>Tipo</th>
+                  <th>Monto Total</th>
+                  <th>Descuento Semanal</th>
+                  <th>Saldo Pendiente</th>
+                  <th>Estatus</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="tablaPrestamosBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. INCIDENCIAS, VACACIONES Y CHECADOR -->
+      <section id="tab-incidencias" class="screen">
+        <div class="card">
+          <div class="card-header">
+            <h3>Registro de Incidencias Semanales</h3>
+            <button class="btn btn-warning btn-sm" onclick="abrirModalSinChecada()">⚠️ Registrar Ausencia de Checada / Justificar</button>
+          </div>
+
+          <form onsubmit="registrarIncidencia(event)">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Empleado *</label>
+                <select id="incEmpSelect" required></select>
+              </div>
+              <div class="form-group">
+                <label>Año *</label>
+                <input type="number" id="incAnio" value="2026" required>
+              </div>
+              <div class="form-group">
+                <label>Semana *</label>
+                <input type="number" id="incSemana" min="1" max="53" required>
+              </div>
+              <div class="form-group">
+                <label>Tipo de Incidencia *</label>
+                <select id="incTipo" required>
+                  <option value="Falta Injustificada">Falta Injustificada (Descuenta 1 día)</option>
+                  <option value="Incapacidad">Incapacidad IMSS (Descuenta 100% días)</option>
+                  <option value="Retardo">Retardo (Informativo, sin descuento)</option>
+                  <option value="Vacaciones">Vacaciones (Disfruta días + 25% Prima)</option>
+                  <option value="Dia Sin Goce">Día Sin Goce de Sueldo (Descuenta 1 día)</option>
+                  <option value="Dia Con Goce">Día Con Goce de Sueldo (Sin descuento)</option>
+                  <option value="Sin Registro Checador">Sin Registro en Checador (Especificar causa)</option>
+                  <option value="Otro">Otro (Especificar)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Cantidad de Días / Eventos *</label>
+                <input type="number" id="incDias" value="1" min="1" max="7" required>
+              </div>
+              <div class="form-group">
+                <label>Observaciones / Causa Detallada *</label>
+                <input type="text" id="incMotivo" required placeholder="Ej. Incapacidad por enfermedad general / Falta checada entrada">
+              </div>
+            </div>
+            <div style="margin-top: 16px; display: flex; gap: 10px; align-items: center;">
+              <button type="submit" class="btn btn-primary">📌 Registrar Incidencia</button>
+              <span style="font-size: 0.78rem; color: var(--text-muted);">* Módulo de importación automática de reloj checador preparado para versión futura.</span>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Bitácora de Incidencias y Control de Vacaciones</h3>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Año / Sem</th>
+                  <th># Emp</th>
+                  <th>Empleado</th>
+                  <th>Incidencia</th>
+                  <th>Días</th>
+                  <th>Impacto Económico</th>
+                  <th>Causa / Nota</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="tablaIncidenciasBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. CÁLCULO Y CIERRE DE NÓMINA SEMANAL -->
+      <section id="tab-nomina" class="screen">
+        <div class="card">
+          <div class="card-header">
+            <h3>Generador Automático de Nómina Semanal (Editable por Admin/RH)</h3>
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+              <label style="font-size: 0.82rem;">Año:</label>
+              <input type="number" id="nomAnio" value="2026" style="width: 85px;">
+              <label style="font-size: 0.82rem;">Semana:</label>
+              <input type="number" id="nomSemana" value="1" min="1" max="53" style="width: 75px;">
+              <button class="btn btn-secondary" onclick="generarPreNomina()">⚡ Calcular Pre-Nómina</button>
+              <button class="btn btn-success" onclick="cerrarYGuardarNomina()">🔒 Cerrar y Guardar Nómina</button>
+            </div>
+          </div>
+
+          <div class="alert-box">
+            <strong>Modo de Auditoría Activo:</strong> Los montos se calculan automáticamente cruzando Sueldo Base (7 días), Bonos de la semana, Préstamos activos, Incidencias y Deducciones de ley. Los administradores pueden editar directamente cualquier celda numérica antes de cerrar la nómina.
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th># Emp</th>
+                  <th>Empleado</th>
+                  <th>Base Sem (7d)</th>
+                  <th>Bono Viajes</th>
+                  <th>Prima Vac.</th>
+                  <th>Desc. Incid.</th>
+                  <th>ISR</th>
+                  <th>IMSS</th>
+                  <th>INFONAVIT</th>
+                  <th>Préstamo</th>
+                  <th>NETO A PAGAR</th>
+                </tr>
+              </thead>
+              <tbody id="tablaPreNominaBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. RECIBOS DE NÓMINA (ACCESO OPERATIVO E IMPRESIÓN) -->
+      <section id="tab-recibos" class="screen">
+        <div class="card">
+          <div class="card-header">
+            <h3>Emisión e Impresión de Recibo de Nómina</h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <select id="reciboNominaSelect" onchange="cargarEmpleadosDeNominaCerrada()">
+                <option value="">-- Selecciona Nómina Cerrada --</option>
+              </select>
+              <select id="reciboEmpSelect" onchange="renderReciboPreview()">
+                <option value="">-- Selecciona Empleado --</option>
+              </select>
+              <button class="btn btn-primary" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+            </div>
+          </div>
+
+          <div id="reciboPrintArea">
+            <div class="recibo-paper" id="reciboDocumento">
+              <p style="text-align: center; color: #64748b;">Selecciona una nómina cerrada y un empleado para generar el recibo oficial.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. CALCULADORA FISCAL MX -->
+      <section id="tab-calculadora" class="screen">
+        <div class="card">
+          <div class="card-header">
+            <h3>Calculadora Auxiliar Fiscal y Laboral (LFT México / Base 30.4)</h3>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Sueldo Mensual Bruto (MXN)</label>
+              <input type="number" id="calcMensual" value="12000" oninput="ejecutarCalculadora()">
+            </div>
+            <div class="form-group">
+              <label>Años de Antigüedad</label>
+              <input type="number" id="calcAntiguedad" value="1" min="0" oninput="ejecutarCalculadora()">
+            </div>
+            <div class="form-group">
+              <label>Factor Integración Mínimo Ley</label>
+              <input type="text" id="calcFactor" readonly>
+            </div>
+            <div class="form-group">
+              <label>Salario Diario (Mensual / 30.4)</label>
+              <input type="text" id="calcDiario" readonly>
+            </div>
+            <div class="form-group">
+              <label>Salario Base Cotización (SBC IMSS)</label>
+              <input type="text" id="calcSbc" readonly>
+            </div>
+            <div class="form-group">
+              <label>Sueldo Semanal (Diario * 7)</label>
+              <input type="text" id="calcSemanal" readonly>
+            </div>
+            <div class="form-group">
+              <label>Días Vacaciones LFT + Días Empresa</label>
+              <input type="text" id="calcVacaciones" readonly>
+            </div>
+            <div class="form-group">
+              <label>Prima Vacacional Anual (25%)</label>
+              <input type="text" id="calcPrimaVac" readonly>
+            </div>
+            <div class="form-group">
+              <label>Estimación ISR Semanal (Referencia)</label>
+              <input type="text" id="calcIsrEst" readonly>
+            </div>
+            <div class="form-group">
+              <label>Estimación Cuota Obrera IMSS Semanal</label>
+              <input type="text" id="calcImssEst" readonly>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9. CONFIGURACIÓN DEL SISTEMA (SIN TOCAR CÓDIGO) -->
+      <section id="tab-configuracion" class="screen">
+        <!-- CONFIGURACIÓN DE BONOS -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Parámetros de Cálculo de Bonos (Editables sin código)</h3>
+            <button class="btn btn-primary btn-sm" onclick="guardarConfigBonos()">💾 Guardar Reglas de Bonos</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Categoría</th>
+                  <th>Mínimo Viajes</th>
+                  <th>Modo de Base</th>
+                  <th>Tarifa por Viaje ($)</th>
+                  <th>Deducción Fija ($)</th>
+                  <th>Multiplicador</th>
+                </tr>
+              </thead>
+              <tbody id="tablaConfigBonosBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- DÍAS DE VACACIONES EXTRA OTORGADOS POR LA EMPRESA (APLICAN A TODOS) -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Días Adicionales Otorgados por la Empresa (Aplican a toda la plantilla por año)</h3>
+          </div>
+          <div class="form-grid" style="margin-bottom: 14px;">
+            <div class="form-group">
+              <label>Año</label>
+              <input type="number" id="diaEmpAnio" value="2026">
+            </div>
+            <div class="form-group">
+              <label>Fecha Específica (Ej. 12 de Diciembre)</label>
+              <input type="date" id="diaEmpFecha">
+            </div>
+            <div class="form-group">
+              <label>Descripción / Motivo</label>
+              <input type="text" id="diaEmpDesc" placeholder="Ej. Día de la Virgen de Guadalupe">
+            </div>
+            <div class="form-group" style="justify-content: flex-end;">
+              <button class="btn btn-secondary" onclick="agregarDiaEmpresa()">+ Agregar Día Global</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Año</th>
+                  <th>Fecha</th>
+                  <th>Descripción</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="tablaDiasEmpresaBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- GESTIÓN DE USUARIOS Y ROLES -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Administración de Usuarios y Niveles de Acceso</h3>
+          </div>
+          <form onsubmit="crearUsuarioSistema(event)" style="margin-bottom: 16px;">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Nombre del Usuario</label>
+                <input type="text" id="usrNombre" required>
+              </div>
+              <div class="form-group">
+                <label>Correo / Usuario de Acceso</label>
+                <input type="text" id="usrCorreo" required>
+              </div>
+              <div class="form-group">
+                <label>Contraseña</label>
+                <input type="text" id="usrPass" required>
+              </div>
+              <div class="form-group">
+                <label>Nivel de Acceso (Rol)</label>
+                <select id="usrRol" required>
+                  <option value="SuperAdmin">Super Administrador (Backend / Total)</option>
+                  <option value="Admin">Administrador (Dueño / Total)</option>
+                  <option value="RH">Recursos Humanos (Gestión General)</option>
+                  <option value="Operativo">Operativo (Solo Préstamos y Recibos)</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-sm" style="margin-top: 12px;">+ Crear Usuario</button>
+          </form>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Usuario</th>
+                  <th>Nivel de Acceso</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="tablaUsuariosBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
     </main>
-</div>
+  </div>
 
-<script>
-    // URL DE LA API GENERADA POR GOOGLE APPS SCRIPT
-    const API_URL = "https://script.google.com/macros/s/AKfycbwnUVuyN3qhDcgbHVILtXTFiho_VgZ0TuiAkIrJXaxFc54-RzVtdDtiAo00u4xNZyg/exec";
-    
-    let empleados = [];
-    let usuarios = [{nombre: 'Desarrollador', correo: 'superadmin', rol: 'SuperAdmin'}];
+  <script>
+    // =========================================================================
+    // CONEXIÓN DIRECTA A FIREBASE REALTIME DATABASE
+    // =========================================================================
+    const FB_URL = "https://proyecto-nopal-default-rtdb.firebaseio.com";
 
-    // Navegación
-    document.querySelectorAll('.nav button').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-            document.getElementById(e.target.dataset.page).classList.add('active');
-            e.target.classList.add('active');
-            document.getElementById('crumb').innerText = e.target.innerText;
-        });
-    });
-
-    window.onload = () => { document.getElementById('loginPanel').style.display = 'flex'; };
-
-    // Login
-    window.loginUser = () => {
-        const pass = document.getElementById('authPass').value;
-        const email = document.getElementById('authEmail').value;
-        let authSuccess = false;
-
-        if (pass === 'compumundohypermegared') {
-            document.getElementById('userRoleBadge').innerText = 'SuperAdmin';
-            document.getElementById('navAdmin').style.display = 'block'; 
-            authSuccess = true;
-        } else if (email.includes('admin') && pass !== '') {
-            document.getElementById('userRoleBadge').innerText = 'Admin';
-            document.getElementById('navAdmin').style.display = 'block';
-            authSuccess = true;
-        } else if (email.includes('rh') && pass !== '') {
-            document.getElementById('userRoleBadge').innerText = 'Recursos Humanos';
-            authSuccess = true;
-        } else {
-            alert("Credenciales incorrectas. Verifique su usuario y contraseña.");
-        }
-
-        if(authSuccess) {
-            document.getElementById('loginPanel').style.display = 'none';
-            // Al iniciar sesión, sincronizamos la base de datos automáticamente
-            sincronizarBaseDatos();
-        }
+    let STATE = {
+      currentUser: null,
+      empleados: {},
+      tiposEmpleado: ["Chofer", "Administrativo", "Gerente", "Recursos Humanos", "Almacenista"],
+      configBonos: {
+        CHOFERES: { minimo: 5, modo: "EXCEDENTE", tarifa: 120, deduccion: 0, multiplicador: 1 },
+        GERENTE: { minimo: 4, modo: "TOTAL", tarifa: 50, deduccion: 100, multiplicador: 2 },
+        ADMINISTRATIVO: { minimo: 4, modo: "TOTAL", tarifa: 50, deduccion: 100, multiplicador: 1 },
+        RH: { minimo: 4, modo: "TOTAL", tarifa: 50, deduccion: 100, multiplicador: 1.5 }
+      },
+      bonos: {},
+      prestamos: {},
+      incidencias: {},
+      diasEmpresa: {},
+      nominas: {},
+      usuarios: {},
+      preNominaActual: []
     };
 
-    window.logout = () => {
-        document.getElementById('authPass').value = '';
-        document.getElementById('authEmail').value = '';
-        document.getElementById('loginPanel').style.display = 'flex';
-        document.getElementById('navAdmin').style.display = 'none';
-        document.querySelector('[data-page="inicio"]').click();
-        empleados = [];
-        actualizarInterfaces();
-    };
-
-    // FUNCIÓN PARA CONSUMIR DATOS DE GOOGLE SHEETS
-    window.sincronizarBaseDatos = async () => {
-        const btnSync = document.getElementById('btnSyncDb');
-        const textOriginal = btnSync.innerText;
-        btnSync.innerText = "Sincronizando...";
-        btnSync.disabled = true;
-
-        try {
-            // Traemos la tabla DB_Empleados desde tu Google Apps Script
-            const respuesta = await fetch(`${API_URL}?tabla=DB_Empleados`);
-            const datosJson = await respuesta.json();
-            
-            if (datosJson.error) {
-                alert("Error desde Google Sheets: " + datosJson.error);
-                return;
-            }
-
-            // Mapeamos los datos del Sheet (dimensiones relacionales) al formato de la UI
-            empleados = datosJson.map(fila => ({
-                nombre: fila.nombre_completo || fila.nombre || 'Sin Nombre',
-                rol: fila.rol || 'Empleado General',
-                estado: fila.estatus || fila.estado || 'Alta',
-                sueldo: parseFloat(fila.sueldo_base || fila.sueldo) || 0,
-                // Si la tabla de empleados no trae estos campos, los inicializamos en 0
-                // En un sistema completo, estos se traerían haciendo un fetch extra a DB_Historial_Nomina
-                bono: parseFloat(fila.bono) || 0,
-                infonavit: parseFloat(fila.infonavit) || 0,
-                prestamo: parseFloat(fila.descuento_hora || fila.prestamo) || 0 
-            }));
-
-            actualizarInterfaces();
-            
-        } catch (error) {
-            console.error("Error al sincronizar con Google Sheets:", error);
-            alert("No se pudo conectar con la Base de Datos. Verifica tu conexión.");
-        } finally {
-            btnSync.innerText = textOriginal;
-            btnSync.disabled = false;
-        }
-    };
-
-    // Funciones anteriores (CSV Fallback, UI, etc.)
-    window.procesarCSV = (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const lineas = e.target.result.split('\n').filter(linea => linea.trim() !== '');
-            empleados = []; 
-            for (let i = 1; i < lineas.length; i++) {
-                const col = lineas[i].split(',');
-                if (col.length >= 7) {
-                    empleados.push({
-                        nombre: col[0].trim(), rol: col[1].trim(), estado: col[2].trim(),
-                        sueldo: parseFloat(col[3].trim()) || 0, bono: parseFloat(col[4].trim()) || 0,
-                        infonavit: parseFloat(col[5].trim()) || 0, prestamo: parseFloat(col[6].trim()) || 0
-                    });
-                }
-            }
-            actualizarInterfaces();
-            alert(`CSV procesado. Se cargaron ${empleados.length} empleados.`);
-        };
-        reader.readAsText(file);
-    };
-
-    function actualizarInterfaces() {
-        let activos = 0, incapacidades = 0, totalPrestamos = 0, htmlPersonal = '', htmlNomina = '';
-
-        if(empleados.length === 0) {
-            document.getElementById('tablaPersonal').innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--muted);">Sin registros. Sincroniza con Google Sheets o importa un CSV.</td></tr>';
-            document.getElementById('tablaNomina').innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--muted);">Carga personal para generar la nómina.</td></tr>';
-            document.getElementById('metricPersonal').innerText = "0";
-            document.getElementById('metricIncapacidades').innerText = "0";
-            document.getElementById('metricPrestamos').innerText = "$0.00";
-            return;
-        }
-
-        empleados.forEach(emp => {
-            if (emp.estado.toLowerCase() === 'alta' || emp.estado.toLowerCase() === 'activo') activos++;
-            if (emp.estado.toLowerCase() === 'incapacidad') incapacidades++;
-            totalPrestamos += emp.prestamo;
-
-            let badgeClass = emp.estado.toLowerCase() === 'alta' ? 's-alta' : (emp.estado.toLowerCase() === 'incapacidad' ? 's-incapacidad' : 's-baja');
-            
-            htmlPersonal += `<tr><td><b>${emp.nombre}</b></td><td>${emp.rol}</td><td><span class="status ${badgeClass}">${emp.estado}</span></td><td>$${emp.sueldo.toFixed(2)}</td></tr>`;
-            let totalNeto = emp.sueldo + emp.bono - emp.infonavit - emp.prestamo;
-            htmlNomina += `<tr><td>${emp.nombre}</td><td>${emp.rol}</td><td>$${emp.sueldo.toFixed(2)}</td><td>$${emp.bono.toFixed(2)}</td><td>$${emp.infonavit.toFixed(2)}</td><td>$${emp.prestamo.toFixed(2)}</td><td><b>$${totalNeto.toFixed(2)}</b></td></tr>`;
-        });
-
-        document.getElementById('tablaPersonal').innerHTML = htmlPersonal;
-        document.getElementById('tablaNomina').innerHTML = htmlNomina;
-
-        document.getElementById('metricPersonal').innerText = activos;
-        document.getElementById('metricIncapacidades').innerText = incapacidades;
-        document.getElementById('metricPrestamos').innerText = "$" + totalPrestamos.toFixed(2);
+    async function fbGet(path) {
+      const res = await fetch(`${FB_URL}/${path}.json`);
+      return await res.json();
     }
 
-    window.procesarNomina = () => {
-        if(empleados.length === 0) {
-            alert("No hay personal cargado. Sincroniza la Base de Datos o importa un CSV.");
-            return;
+    async function fbPut(path, data) {
+      const res = await fetch(`${FB_URL}/${path}.json`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      return await res.json();
+    }
+
+    async function fbPost(path, data) {
+      const res = await fetch(`${FB_URL}/${path}.json`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      return await res.json();
+    }
+
+    async function fbDelete(path) {
+      await fetch(`${FB_URL}/${path}.json`, { method: "DELETE" });
+    }
+
+    // =========================================================================
+    // INICIALIZACIÓN DE PARÁMETROS BASE EN FIREBASE
+    // =========================================================================
+    async function inicializarFirebaseBase() {
+      const msg = document.getElementById("loginMsg");
+      msg.innerText = "Inicializando estructura en Firebase...";
+      try {
+        const usuariosIniciales = {
+          u_super: { nombre: "Soporte Backend", correo: "superadmin@argue.com", pass: "super123", rol: "SuperAdmin" },
+          u_admin: { nombre: "Dirección General", correo: "dueno@argue.com", pass: "admin123", rol: "Admin" },
+          u_rh: { nombre: "Recursos Humanos", correo: "rh@argue.com", pass: "rh123", rol: "RH" },
+          u_op: { nombre: "Auxiliar Operativo", correo: "operativo@argue.com", pass: "op123", rol: "Operativo" }
+        };
+        await fbPut("usuarios_sistema", usuariosIniciales);
+        await fbPut("config_bonos", STATE.configBonos);
+        await fbPut("tipos_empleado", STATE.tiposEmpleado);
+        msg.style.color = "var(--success)";
+        msg.innerText = "¡Base inicializada! Usa dueno@argue.com / admin123 para entrar.";
+      } catch (e) {
+        msg.innerText = "Error al conectar con Firebase: " + e.message;
+      }
+    }
+
+    // =========================================================================
+    // AUTENTICACIÓN Y CONTROL DE ROLES (RBAC)
+    // =========================================================================
+    async function iniciarSesion() {
+      const userInp = document.getElementById("loginUser").value.trim().toLowerCase();
+      const passInp = document.getElementById("loginPass").value.trim();
+      const msg = document.getElementById("loginMsg");
+
+      if (!userInp || !passInp) {
+        msg.innerText = "Ingresa usuario y contraseña.";
+        return;
+      }
+
+      msg.innerText = "Validando credenciales...";
+      const usuariosDB = await fbGet("usuarios_sistema");
+
+      if (!usuariosDB) {
+        msg.innerText = "Base de datos vacía. Haz clic en 'Inicializar Base de Datos en Firebase'.";
+        return;
+      }
+
+      const encontrado = Object.values(usuariosDB).find(
+        u => u.correo.toLowerCase() === userInp && u.pass === passInp
+      );
+
+      if (!encontrado) {
+        msg.innerText = "Credenciales incorrectas.";
+        return;
+      }
+
+      STATE.currentUser = encontrado;
+      document.getElementById("loginOverlay").style.display = "none";
+      document.getElementById("badgeRolActual").innerText = encontrado.rol;
+
+      aplicarPermisosPorRol(encontrado.rol);
+      await cargarTodoDesdeFirebase();
+    }
+
+    function cerrarSesion() {
+      STATE.currentUser = null;
+      document.getElementById("loginOverlay").style.display = "flex";
+      document.getElementById("loginPass").value = "";
+      document.getElementById("loginMsg").innerText = "";
+    }
+
+    function aplicarPermisosPorRol(rol) {
+      const buttons = document.querySelectorAll(".nav-btn");
+      let primerTabPermitido = null;
+
+      buttons.forEach(btn => {
+        const permitidos = btn.dataset.roles.split(",");
+        if (permitidos.includes(rol)) {
+          btn.style.display = "flex";
+          if (!primerTabPermitido) primerTabPermitido = btn.dataset.tab;
+        } else {
+          btn.style.display = "none";
         }
-        alert("Nómina procesada con éxito. Los recibos se han generado y guardado.");
-    };
+      });
 
-    window.agregarAsueto = () => {
-        const fecha = document.getElementById('nuevoAsuetoFecha').value;
-        const motivo = document.getElementById('nuevoAsuetoMotivo').value;
-        if(!fecha || !motivo) { alert("Completa fecha y motivo."); return; }
-        const li = document.createElement('li');
-        li.innerText = `${fecha} - ${motivo}`;
-        document.getElementById('listaAsuetos').appendChild(li);
-        document.getElementById('nuevoAsuetoFecha').value = '';
-        document.getElementById('nuevoAsuetoMotivo').value = '';
-    };
+      if (primerTabPermitido) {
+        cambiarTab(primerTabPermitido);
+      }
+    }
 
-    window.crearUsuario = () => {
-        const nombre = document.getElementById('newUserName').value;
-        const correo = document.getElementById('newUserEmail').value;
-        const rol = document.getElementById('newUserRole').value;
-        if(!nombre || !correo) { alert("Llena los campos del usuario."); return; }
-        
-        usuarios.push({nombre, correo, rol});
-        document.getElementById('tablaUsuariosGestor').innerHTML += `<tr><td>${nombre}</td><td>${correo}</td><td>${rol}</td><td><button class="btn">Bloquear</button></td></tr>`;
-        alert("Usuario creado exitosamente.");
-    };
+    // Navegación
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+      btn.addEventListener("click", () => cambiarTab(btn.dataset.tab));
+    });
 
-    window.exportarCSV = () => {
-        if(empleados.length === 0) { alert("No hay datos para exportar."); return; }
-        alert("Iniciando descarga de Reporte_Nomina.csv...");
-    };
-</script>
+    function cambiarTab(tabId) {
+      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+      document.querySelectorAll(".nav-btn").forEach(b => b.classList.remove("active"));
+
+      const targetScreen = document.getElementById(`tab-${tabId}`);
+      const targetBtn = document.querySelector(`.nav-btn[data-tab="${tabId}"]`);
+      if (targetScreen) targetScreen.classList.add("active");
+      if (targetBtn) {
+        targetBtn.classList.add("active");
+        document.getElementById("topbarTitle").innerText = targetBtn.innerText;
+      }
+    }
+
+    // =========================================================================
+    // SINCRONIZACIÓN GENERAL
+    // =========================================================================
+    async function cargarTodoDesdeFirebase() {
+      document.getElementById("syncLabel").innerText = "Sincronizando...";
+      const [emps, tipos, cfgBonos, bonos, prest, incid, diasEmp, nominas, usrs] = await Promise.all([
+        fbGet("empleados"),
+        fbGet("tipos_empleado"),
+        fbGet("config_bonos"),
+        fbGet("historial_bonos"),
+        fbGet("prestamos"),
+        fbGet("incidencias"),
+        fbGet("dias_empresa"),
+        fbGet("nominas_historicas"),
+        fbGet("usuarios_sistema")
+      ]);
+
+      STATE.empleados = emps || {};
+      if (tipos && Array.isArray(tipos)) STATE.tiposEmpleado = tipos;
+      if (cfgBonos) STATE.configBonos = cfgBonos;
+      STATE.bonos = bonos || {};
+      STATE.prestamos = prest || {};
+      STATE.incidencias = incid || {};
+      STATE.diasEmpresa = diasEmp || {};
+      STATE.nominas = nominas || {};
+      STATE.usuarios = usrs || {};
+
+      document.getElementById("syncLabel").innerText = "Sincronizado con Firebase";
+      renderAll();
+    }
+
+    function renderAll() {
+      renderSelectTiposEmpleado();
+      renderSelectsEmpleados();
+      renderTablaEmpleados();
+      renderTablaBonos();
+      renderTablaPrestamos();
+      renderTablaIncidencias();
+      renderConfigBonos();
+      renderDiasEmpresa();
+      renderUsuariosTabla();
+      renderHistorialNominas();
+      actualizarDashboardKPIs();
+      ejecutarCalculadora();
+    }
+
+    // =========================================================================
+    // MÓDULO 1: EMPLEADOS Y VACACIONES LFT MÉXICO
+    // =========================================================================
+    function recalcularSalariosAlta() {
+      const mensual = parseFloat(document.getElementById("empSueldoMensual").value) || 0;
+      const diario = mensual / 30.4;
+      const semanal = diario * 7;
+      document.getElementById("empSalarioDiario").value = diario.toFixed(2);
+      document.getElementById("empSueldoSemanal").value = semanal.toFixed(2);
+    }
+
+    function calcularVacacionesLFT(fechaIngreso) {
+      if (!fechaIngreso) return { anios: 0, diasLey: 0, diasEmpresa: 0, total: 0 };
+      const ingreso = new Date(fechaIngreso + "T00:00:00");
+      const hoy = new Date();
+      let anios = hoy.getFullYear() - ingreso.getFullYear();
+      const m = hoy.getMonth() - ingreso.getMonth();
+      if (m < 0 || (m === 0 && hoy.getDate() < ingreso.getDate())) anios--;
+
+      let diasLey = 0;
+      if (anios === 1) diasLey = 12;
+      else if (anios === 2) diasLey = 14;
+      else if (anios === 3) diasLey = 16;
+      else if (anios === 4) diasLey = 18;
+      else if (anios === 5) diasLey = 20;
+      else if (anios >= 6 && anios <= 10) diasLey = 22;
+      else if (anios >= 11 && anios <= 15) diasLey = 24;
+      else if (anios >= 16 && anios <= 20) diasLey = 26;
+      else if (anios >= 21 && anios <= 25) diasLey = 28;
+      else if (anios >= 26) diasLey = 30;
+
+      const anioActual = hoy.getFullYear();
+      const diasEmpresa = Object.values(STATE.diasEmpresa).filter(d => Number(d.anio) === anioActual).length;
+      return { anios: Math.max(0, anios), diasLey, diasEmpresa, total: diasLey + diasEmpresa };
+    }
+
+    function renderSelectTiposEmpleado() {
+      const sel = document.getElementById("empTipo");
+      sel.innerHTML = STATE.tiposEmpleado.map(t => `<option value="${t}">${t}</option>`).join("");
+    }
+
+    async function agregarTipoEmpleado() {
+      const nuevo = document.getElementById("nuevoTipoEmpInput").value.trim();
+      if (!nuevo) return;
+      if (!STATE.tiposEmpleado.includes(nuevo)) {
+        STATE.tiposEmpleado.push(nuevo);
+        await fbPut("tipos_empleado", STATE.tiposEmpleado);
+        renderSelectTiposEmpleado();
+        document.getElementById("empTipo").value = nuevo;
+      }
+      document.getElementById("nuevoTipoEmpInput").value = "";
+    }
+
+    async function guardarEmpleado(e) {
+      e.preventDefault();
+      const key = document.getElementById("empEditKey").value || `emp_${document.getElementById("empNumero").value}`;
+      const mensual = parseFloat(document.getElementById("empSueldoMensual").value) || 0;
+      const diario = mensual / 30.4;
+      const semanal = diario * 7;
+
+      const data = {
+        numero: document.getElementById("empNumero").value.trim(),
+        nombre: document.getElementById("empNombre").value.trim(),
+        nacimiento: document.getElementById("empNacimiento").value,
+        ingreso: document.getElementById("empIngreso").value,
+        baja: document.getElementById("empBaja").value || "",
+        curp: document.getElementById("empCurp").value.trim().toUpperCase(),
+        nss: document.getElementById("empNss").value.trim(),
+        rfc: document.getElementById("empRfc").value.trim().toUpperCase(),
+        direccion: document.getElementById("empDireccion").value.trim(),
+        estado: document.getElementById("empEstado").value,
+        puesto: document.getElementById("empPuesto").value.trim(),
+        jefe: document.getElementById("empJefe").value.trim(),
+        tipo: document.getElementById("empTipo").value,
+        esquemaBono: document.getElementById("empEsquemaBono").value,
+        jornada: document.getElementById("empJornada").value,
+        diasSem: Number(document.getElementById("empDiasSem").value),
+        sueldoMensual: mensual,
+        salarioDiario: Number(diario.toFixed(4)),
+        sueldoSemanal: Number(semanal.toFixed(2)),
+        isrFijo: parseFloat(document.getElementById("empIsr").value) || 0,
+        imssFijo: parseFloat(document.getElementById("empImss").value) || 0,
+        infonavitFijo: parseFloat(document.getElementById("empInfonavit").value) || 0
+      };
+
+      await fbPut(`empleados/${key}`, data);
+      limpiarFormEmpleado();
+      await cargarTodoDesdeFirebase();
+      alert("Empleado guardado correctamente.");
+    }
+
+    function editarEmpleado(key) {
+      const emp = STATE.empleados[key];
+      if (!emp) return;
+      document.getElementById("empEditKey").value = key;
+      document.getElementById("empNumero").value = emp.numero;
+      document.getElementById("empNombre").value = emp.nombre;
+      document.getElementById("empNacimiento").value = emp.nacimiento;
+      document.getElementById("empIngreso").value = emp.ingreso;
+      document.getElementById("empBaja").value = emp.baja || "";
+      document.getElementById("empCurp").value = emp.curp;
+      document.getElementById("empNss").value = emp.nss;
+      document.getElementById("empRfc").value = emp.rfc;
+      document.getElementById("empDireccion").value = emp.direccion;
+      document.getElementById("empEstado").value = emp.estado;
+      document.getElementById("empPuesto").value = emp.puesto;
+      document.getElementById("empJefe").value = emp.jefe;
+      document.getElementById("empTipo").value = emp.tipo;
+      document.getElementById("empEsquemaBono").value = emp.esquemaBono;
+      document.getElementById("empJornada").value = emp.jornada;
+      document.getElementById("empDiasSem").value = emp.diasSem;
+      document.getElementById("empSueldoMensual").value = emp.sueldoMensual;
+      document.getElementById("empIsr").value = emp.isrFijo || 0;
+      document.getElementById("empImss").value = emp.imssFijo || 0;
+      document.getElementById("empInfonavit").value = emp.infonavitFijo || 0;
+      recalcularSalariosAlta();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function limpiarFormEmpleado() {
+      document.getElementById("formEmpleado").reset();
+      document.getElementById("empEditKey").value = "";
+      document.getElementById("empSalarioDiario").value = "";
+      document.getElementById("empSueldoSemanal").value = "";
+    }
+
+    function renderTablaEmpleados() {
+      const tbody = document.getElementById("tablaEmpleadosBody");
+      const filtro = (document.getElementById("buscarEmpInput").value || "").toLowerCase();
+      const entries = Object.entries(STATE.empleados).filter(([k, e]) =>
+        e.nombre.toLowerCase().includes(filtro) || String(e.numero).includes(filtro)
+      );
+
+      tbody.innerHTML = entries.map(([key, e]) => {
+        const vac = calcularVacacionesLFT(e.ingreso);
+        const badgeCls = e.estado === "Alta" ? "badge-alta" : (e.estado === "Baja" ? "badge-baja" : "badge-warn");
+        return `
+          <tr>
+            <td><strong>${e.numero}</strong></td>
+            <td>${e.nombre}<br><small style="color:var(--text-muted)">RFC: ${e.rfc}</small></td>
+            <td>${e.puesto}<br><small style="color:var(--primary)">${e.tipo}</small></td>
+            <td><span class="badge badge-info">${e.esquemaBono}</span></td>
+            <td>${vac.anios} año(s) • <strong>${vac.total} días</strong><br><small style="color:var(--text-muted)">(${vac.diasLey} LFT + ${vac.diasEmpresa} Emp.)</small></td>
+            <td>$${Number(e.sueldoMensual).toLocaleString("es-MX", {minimumFractionDigits:2})}</td>
+            <td><strong>$${Number(e.sueldoSemanal).toLocaleString("es-MX", {minimumFractionDigits:2})}</strong></td>
+            <td><span class="badge ${badgeCls}">${e.estado}</span></td>
+            <td><button class="btn btn-outline btn-sm" onclick="editarEmpleado('${key}')">Editar</button></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderSelectsEmpleados() {
+      const activos = Object.entries(STATE.empleados).filter(([k, e]) => e.estado !== "Baja");
+      const opts = `<option value="">-- Seleccionar Empleado --</option>` +
+        activos.map(([k, e]) => `<option value="${k}">#${e.numero} - ${e.nombre}</option>`).join("");
+
+      ["bonoEmpSelect", "prestamoEmpSelect", "incEmpSelect"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = opts;
+      });
+    }
+
+    // =========================================================================
+    // MÓDULO 2: CÁLCULO EXACTO DE BONOS SEMANALES
+    // =========================================================================
+    function calcularMontoBono(esquemaKey, viajes) {
+      const v = Number(viajes) || 0;
+      const regla = STATE.configBonos[esquemaKey];
+      if (!regla || esquemaKey === "NINGUNO") return 0;
+
+      if (v <= Number(regla.minimo)) return 0;
+
+      if (regla.modo === "EXCEDENTE") {
+        // Choferes: (viajes - 5) * 120
+        return ((v - Number(regla.minimo)) * Number(regla.tarifa) - Number(regla.deduccion)) * Number(regla.multiplicador);
+      } else {
+        // Gerente, Admin, RH: (viajes * 50 - 100) * multiplicador
+        return ((v * Number(regla.tarifa)) - Number(regla.deduccion)) * Number(regla.multiplicador);
+      }
+    }
+
+    function actualizarPreviewBono() {
+      const empKey = document.getElementById("bonoEmpSelect").value;
+      const viajes = Number(document.getElementById("bonoViajes").value) || 0;
+      if (!empKey || !STATE.empleados[empKey]) {
+        document.getElementById("bonoCategoriaPreview").value = "";
+        document.getElementById("bonoMontoPreview").value = "$0.00";
+        return;
+      }
+      const emp = STATE.empleados[empKey];
+      const monto = calcularMontoBono(emp.esquemaBono, viajes);
+      document.getElementById("bonoCategoriaPreview").value = emp.esquemaBono;
+      document.getElementById("bonoMontoPreview").value = `$${monto.toLocaleString("es-MX", {minimumFractionDigits:2})}`;
+    }
+
+    async function registrarBonoSemanal(e) {
+      e.preventDefault();
+      const empKey = document.getElementById("bonoEmpSelect").value;
+      const emp = STATE.empleados[empKey];
+      const anio = Number(document.getElementById("bonoAnio").value);
+      const semana = Number(document.getElementById("bonoSemana").value);
+      const viajes = Number(document.getElementById("bonoViajes").value);
+      const monto = calcularMontoBono(emp.esquemaBono, viajes);
+
+      await fbPost("historial_bonos", {
+        empKey,
+        numeroEmpleado: emp.numero,
+        nombreEmpleado: emp.nombre,
+        categoria: emp.esquemaBono,
+        anio,
+        semana,
+        viajes,
+        montoCalculado: monto,
+        fechaRegistro: new Date().toISOString()
+      });
+
+      document.getElementById("bonoViajes").value = "";
+      actualizarPreviewBono();
+      await cargarTodoDesdeFirebase();
+      alert(`Bono registrado por $${monto.toFixed(2)} MXN`);
+    }
+
+    function renderTablaBonos() {
+      const tbody = document.getElementById("tablaBonosBody");
+      const list = Object.entries(STATE.bonos).reverse();
+      tbody.innerHTML = list.map(([key, b]) => `
+        <tr>
+          <td>${b.anio} - Sem <strong>${b.semana}</strong></td>
+          <td>${b.numeroEmpleado}</td>
+          <td>${b.nombreEmpleado}</td>
+          <td><span class="badge badge-info">${b.categoria}</span></td>
+          <td>${b.viajes}</td>
+          <td style="color:var(--success); font-weight:700;">$${Number(b.montoCalculado).toFixed(2)}</td>
+          <td><button class="btn btn-danger btn-sm" onclick="eliminarRegistro('historial_bonos','${key}')">X</button></td>
+        </tr>
+      `).join("");
+    }
+
+    // =========================================================================
+    // MÓDULO 3: PRÉSTAMOS (ADELANTO SEMANAL Y CONVENCIONAL)
+    // =========================================================================
+    function ajustarCamposPrestamo() {
+      const tipo = document.getElementById("prestamoTipo").value;
+      const semInput = document.getElementById("prestamoSemanas");
+      if (tipo === "Adelanto Semanal") {
+        semInput.value = 1;
+        semInput.readOnly = true;
+      } else {
+        semInput.readOnly = false;
+      }
+      calcularDescuentoPrestamo();
+    }
+
+    function calcularDescuentoPrestamo() {
+      const total = parseFloat(document.getElementById("prestamoTotal").value) || 0;
+      const semanas = Math.max(1, parseInt(document.getElementById("prestamoSemanas").value) || 1);
+      document.getElementById("prestamoDescuentoSem").value = (total / semanas).toFixed(2);
+    }
+
+    async function registrarPrestamo(e) {
+      e.preventDefault();
+      const empKey = document.getElementById("prestamoEmpSelect").value;
+      const emp = STATE.empleados[empKey];
+      const total = parseFloat(document.getElementById("prestamoTotal").value);
+      const descuentoSem = parseFloat(document.getElementById("prestamoDescuentoSem").value);
+
+      await fbPost("prestamos", {
+        empKey,
+        numeroEmpleado: emp.numero,
+        nombreEmpleado: emp.nombre,
+        tipo: document.getElementById("prestamoTipo").value,
+        montoTotal: total,
+        semanas: parseInt(document.getElementById("prestamoSemanas").value),
+        descuentoSemanal: descuentoSem,
+        saldoPendiente: total,
+        fecha: document.getElementById("prestamoFecha").value,
+        estatus: "Activo"
+      });
+
+      e.target.reset();
+      await cargarTodoDesdeFirebase();
+      alert("Préstamo registrado exitosamente.");
+    }
+
+    function renderTablaPrestamos() {
+      const tbody = document.getElementById("tablaPrestamosBody");
+      const list = Object.entries(STATE.prestamos).reverse();
+      tbody.innerHTML = list.map(([key, p]) => {
+        const badgeCls = p.estatus === "Activo" ? "badge-warn" : "badge-alta";
+        return `
+          <tr>
+            <td>${p.numeroEmpleado}</td>
+            <td>${p.nombreEmpleado}</td>
+            <td>${p.tipo}</td>
+            <td>$${Number(p.montoTotal).toFixed(2)}</td>
+            <td><strong>$${Number(p.descuentoSemanal).toFixed(2)}</strong></td>
+            <td>$${Number(p.saldoPendiente).toFixed(2)}</td>
+            <td><span class="badge ${badgeCls}">${p.estatus}</span></td>
+            <td><button class="btn btn-danger btn-sm" onclick="eliminarRegistro('prestamos','${key}')">X</button></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    // =========================================================================
+    // MÓDULO 4: INCIDENCIAS, VACACIONES Y CHECADOR
+    // =========================================================================
+    function abrirModalSinChecada() {
+      document.getElementById("incTipo").value = "Sin Registro Checador";
+      document.getElementById("incMotivo").focus();
+      alert("Selecciona el empleado, la semana y escribe la causa por la cual no existe registro en el checador.");
+    }
+
+    async function registrarIncidencia(e) {
+      e.preventDefault();
+      const empKey = document.getElementById("incEmpSelect").value;
+      const emp = STATE.empleados[empKey];
+      const tipo = document.getElementById("incTipo").value;
+      const dias = Number(document.getElementById("incDias").value);
+
+      let descuento = 0;
+      let primaVac = 0;
+
+      if (tipo === "Falta Injustificada" || tipo === "Incapacidad" || tipo === "Dia Sin Goce") {
+        descuento = Number((emp.salarioDiario * dias).toFixed(2));
+      } else if (tipo === "Vacaciones") {
+        primaVac = Number((emp.salarioDiario * dias * 0.25).toFixed(2));
+      }
+
+      await fbPost("incidencias", {
+        empKey,
+        numeroEmpleado: emp.numero,
+        nombreEmpleado: emp.nombre,
+        anio: Number(document.getElementById("incAnio").value),
+        semana: Number(document.getElementById("incSemana").value),
+        tipo,
+        dias,
+        descuentoCalculado: descuento,
+        primaVacacional: primaVac,
+        motivo: document.getElementById("incMotivo").value.trim()
+      });
+
+      e.target.reset();
+      await cargarTodoDesdeFirebase();
+      alert("Incidencia registrada.");
+    }
+
+    function renderTablaIncidencias() {
+      const tbody = document.getElementById("tablaIncidenciasBody");
+      const list = Object.entries(STATE.incidencias).reverse();
+      tbody.innerHTML = list.map(([key, inc]) => {
+        let impacto = "Informativo ($0.00)";
+        if (inc.descuentoCalculado > 0) impacto = `<span style="color:var(--danger)">-$${Number(inc.descuentoCalculado).toFixed(2)}</span>`;
+        if (inc.primaVacacional > 0) impacto = `<span style="color:var(--success)">+$${Number(inc.primaVacacional).toFixed(2)} Prima</span>`;
+
+        return `
+          <tr>
+            <td>${inc.anio} - Sem ${inc.semana}</td>
+            <td>${inc.numeroEmpleado}</td>
+            <td>${inc.nombreEmpleado}</td>
+            <td><strong>${inc.tipo}</strong></td>
+            <td>${inc.dias}</td>
+            <td>${impacto}</td>
+            <td>${inc.motivo}</td>
+            <td><button class="btn btn-danger btn-sm" onclick="eliminarRegistro('incidencias','${key}')">X</button></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    // =========================================================================
+    // MÓDULO 5: CÁLCULO INTEGRAL Y EDICIÓN DE NÓMINA FINAL
+    // =========================================================================
+    function generarPreNomina() {
+      const anio = Number(document.getElementById("nomAnio").value);
+      const semana = Number(document.getElementById("nomSemana").value);
+      const activos = Object.entries(STATE.empleados).filter(([k, e]) => e.estado === "Alta" || e.estado === "Incapacidad");
+
+      STATE.preNominaActual = activos.map(([empKey, emp]) => {
+        // 1. Sumar bonos de esa semana
+        const bonoSem = Object.values(STATE.bonos)
+          .filter(b => b.empKey === empKey && Number(b.anio) === anio && Number(b.semana) === semana)
+          .reduce((acc, b) => acc + Number(b.montoCalculado), 0);
+
+        // 2. Incidencias de esa semana
+        const incs = Object.values(STATE.incidencias)
+          .filter(i => i.empKey === empKey && Number(i.anio) === anio && Number(i.semana) === semana);
+        const descIncid = incs.reduce((acc, i) => acc + Number(i.descuentoCalculado || 0), 0);
+        const primaVac = incs.reduce((acc, i) => acc + Number(i.primaVacacional || 0), 0);
+
+        // 3. Préstamos activos
+        const prestamosActivos = Object.entries(STATE.prestamos)
+          .filter(([pk, p]) => p.empKey === empKey && p.estatus === "Activo" && Number(p.saldoPendiente) > 0);
+        const descPrestamo = prestamosActivos.reduce((acc, [pk, p]) => {
+          return acc + Math.min(Number(p.saldoPendiente), Number(p.descuentoSemanal));
+        }, 0);
+
+        const baseSem = Number(emp.sueldoSemanal);
+        const isr = Number(emp.isrFijo || 0);
+        const imss = Number(emp.imssFijo || 0);
+        const infonavit = Number(emp.infonavitFijo || 0);
+        const neto = baseSem + bonoSem + primaVac - descIncid - isr - imss - infonavit - descPrestamo;
+
+        return {
+          empKey,
+          numero: emp.numero,
+          nombre: emp.nombre,
+          puesto: emp.puesto,
+          rfc: emp.rfc,
+          nss: emp.nss,
+          curp: emp.curp,
+          salarioDiario: emp.salarioDiario,
+          baseSem,
+          bonoSem,
+          primaVac,
+          descIncid,
+          isr,
+          imss,
+          infonavit,
+          descPrestamo,
+          neto: Number(neto.toFixed(2))
+        };
+      });
+
+      renderTablaPreNomina();
+    }
+
+    function renderTablaPreNomina() {
+      const tbody = document.getElementById("tablaPreNominaBody");
+      tbody.innerHTML = STATE.preNominaActual.map((row, idx) => `
+        <tr>
+          <td>${row.numero}</td>
+          <td><strong>${row.nombre}</strong></td>
+          <td><input type="number" step="0.01" class="editable-cell" value="${row.baseSem}" onchange="editarCeldaNomina(${idx}, 'baseSem', this.value)"></td>
+          <td><input type="number" step="0.01" class="editable-cell" value="${row.bonoSem}" onchange="editarCeldaNomina(${idx}, 'bonoSem', this.value)"></td>
+          <td><input type="number" step="0.01" class="editable-cell" value="${row.primaVac}" onchange="editarCeldaNomina(${idx}, 'primaVac', this.value)"></td>
+          <td><input type="number" step="0.01" class="editable-cell" value="${row.descIncid}" onchange="editarCeldaNomina(${idx}, 'descIncid', this.value)"></td>
+          <td><input type="number" step="0.01" class="editable-cell" value="${row.isr}" onchange="editarCeldaNomina(${idx}, 'isr', this.value)"></td>
+          <td><input type="number" step="0.01" class="editable-cell" value="${row.imss}" onchange="editarCeldaNomina(${idx}, 'imss', this.value)"></td>
+          <td><input type="number" step="0.01" class="editable-cell" value="${row.infonavit}" onchange="editarCeldaNomina(${idx}, 'infonavit', this.value)"></td>
+          <td><input type="number" step="0.01" class="editable-cell" value="${row.descPrestamo}" onchange="editarCeldaNomina(${idx}, 'descPrestamo', this.value)"></td>
+          <td style="color:var(--success); font-weight:700; font-size:0.95rem;">$${row.neto.toFixed(2)}</td>
+        </tr>
+      `).join("");
+    }
+
+    function editarCeldaNomina(idx, campo, valor) {
+      const r = STATE.preNominaActual[idx];
+      r[campo] = parseFloat(valor) || 0;
+      r.neto = Number((r.baseSem + r.bonoSem + r.primaVac - r.descIncid - r.isr - r.imss - r.infonavit - r.descPrestamo).toFixed(2));
+      renderTablaPreNomina();
+    }
+
+    async function cerrarYGuardarNomina() {
+      if (STATE.preNominaActual.length === 0) {
+        alert("Primero calcula la pre-nómina.");
+        return;
+      }
+      const anio = Number(document.getElementById("nomAnio").value);
+      const semana = Number(document.getElementById("nomSemana").value);
+      const nomKey = `nom_${anio}_S${semana}`;
+
+      const totalPercepciones = STATE.preNominaActual.reduce((a, r) => a + r.baseSem + r.bonoSem + r.primaVac, 0);
+      const totalDeducciones = STATE.preNominaActual.reduce((a, r) => a + r.descIncid + r.isr + r.imss + r.infonavit + r.descPrestamo, 0);
+      const totalNeto = STATE.preNominaActual.reduce((a, r) => a + r.neto, 0);
+
+      // Descontar saldos de préstamos activos automáticamente
+      for (const [pk, p] of Object.entries(STATE.prestamos)) {
+        if (p.estatus === "Activo" && Number(p.saldoPendiente) > 0) {
+          const abono = Math.min(Number(p.saldoPendiente), Number(p.descuentoSemanal));
+          const nuevoSaldo = Number((Number(p.saldoPendiente) - abono).toFixed(2));
+          p.saldoPendiente = nuevoSaldo;
+          if (nuevoSaldo <= 0) p.estatus = "Liquidado";
+          await fbPut(`prestamos/${pk}`, p);
+        }
+      }
+
+      await fbPut(`nominas_historicas/${nomKey}`, {
+        anio,
+        semana,
+        fechaCierre: new Date().toLocaleDateString("es-MX"),
+        totalPercepciones: Number(totalPercepciones.toFixed(2)),
+        totalDeducciones: Number(totalDeducciones.toFixed(2)),
+        totalNeto: Number(totalNeto.toFixed(2)),
+        detalle: STATE.preNominaActual
+      });
+
+      await cargarTodoDesdeFirebase();
+      alert(`Nómina Semana ${semana} (${anio}) cerrada y guardada. Saldos de préstamos actualizados.`);
+    }
+
+    function renderHistorialNominas() {
+      const tbody = document.getElementById("tablaHistorialNominas");
+      const selectRecibo = document.getElementById("reciboNominaSelect");
+      const entries = Object.entries(STATE.nominas).reverse();
+
+      tbody.innerHTML = entries.map(([k, n]) => `
+        <tr>
+          <td><strong>${n.anio} - Semana ${n.semana}</strong></td>
+          <td>${n.fechaCierre}</td>
+          <td>${(n.detalle || []).length} empleados</td>
+          <td>$${Number(n.totalPercepciones).toLocaleString("es-MX", {minimumFractionDigits:2})}</td>
+          <td>$${Number(n.totalDeducciones).toLocaleString("es-MX", {minimumFractionDigits:2})}</td>
+          <td style="color:var(--success); font-weight:700;">$${Number(n.totalNeto).toLocaleString("es-MX", {minimumFractionDigits:2})}</td>
+        </tr>
+      `).join("");
+
+      selectRecibo.innerHTML = `<option value="">-- Selecciona Nómina Cerrada --</option>` +
+        entries.map(([k, n]) => `<option value="${k}">Año ${n.anio} - Semana ${n.semana} (${n.fechaCierre})</option>`).join("");
+    }
+
+    // =========================================================================
+    // MÓDULO 6: RECIBOS DE NÓMINA OFICIALES (ARGUE MATERIALES S.A. DE C.V.)
+    // =========================================================================
+    function cargarEmpleadosDeNominaCerrada() {
+      const nomKey = document.getElementById("reciboNominaSelect").value;
+      const empSel = document.getElementById("reciboEmpSelect");
+      if (!nomKey || !STATE.nominas[nomKey]) {
+        empSel.innerHTML = `<option value="">-- Selecciona Empleado --</option>`;
+        return;
+      }
+      const detalle = STATE.nominas[nomKey].detalle || [];
+      empSel.innerHTML = `<option value="">-- Selecciona Empleado --</option>` +
+        detalle.map((d, idx) => `<option value="${idx}">#${d.numero} - ${d.nombre}</option>`).join("");
+    }
+
+    function renderReciboPreview() {
+      const nomKey = document.getElementById("reciboNominaSelect").value;
+      const idx = document.getElementById("reciboEmpSelect").value;
+      const container = document.getElementById("reciboDocumento");
+
+      if (!nomKey || idx === "") return;
+      const nom = STATE.nominas[nomKey];
+      const d = nom.detalle[idx];
+      const totPerc = d.baseSem + d.bonoSem + d.primaVac;
+      const totDed = d.descIncid + d.isr + d.imss + d.infonavit + d.descPrestamo;
+
+      container.innerHTML = `
+        <div class="recibo-header">
+          <div>
+            <h2 style="margin:0; font-size:1.25rem;">ARGUE MATERIALES S.A. DE C.V.</h2>
+            <p style="font-size:0.8rem; color:#475569; margin-top:4px;">COMPROBANTE DE PAGO DE NÓMINA SEMANAL</p>
+          </div>
+          <div style="text-align:right; font-size:0.82rem;">
+            <strong>Periodo:</strong> Semana ${nom.semana} / ${nom.anio}<br>
+            <strong>Fecha Emisión:</strong> ${nom.fechaCierre}
+          </div>
+        </div>
+
+        <div class="recibo-grid">
+          <div>
+            <strong>No. Empleado:</strong> ${d.numero}<br>
+            <strong>Nombre:</strong> ${d.nombre}<br>
+            <strong>Puesto:</strong> ${d.puesto}
+          </div>
+          <div>
+            <strong>RFC:</strong> ${d.rfc}<br>
+            <strong>CURP:</strong> ${d.curp}<br>
+            <strong>NSS:</strong> ${d.nss} • <strong>S.D.:</strong> $${Number(d.salarioDiario).toFixed(2)}
+          </div>
+        </div>
+
+        <table class="recibo-table">
+          <thead>
+            <tr>
+              <th>PERCEPCIONES</th>
+              <th style="text-align:right;">IMPORTE</th>
+              <th>DEDUCCIONES</th>
+              <th style="text-align:right;">IMPORTE</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Sueldo Base Semanal (7 días)</td>
+              <td style="text-align:right;">$${d.baseSem.toFixed(2)}</td>
+              <td>ISR Retenido</td>
+              <td style="text-align:right;">$${d.isr.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td>Bono Productividad / Viajes</td>
+              <td style="text-align:right;">$${d.bonoSem.toFixed(2)}</td>
+              <td>Cuota Obrera IMSS</td>
+              <td style="text-align:right;">$${d.imss.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td>Prima Vacacional (25%)</td>
+              <td style="text-align:right;">$${d.primaVac.toFixed(2)}</td>
+              <td>Descuento INFONAVIT</td>
+              <td style="text-align:right;">$${d.infonavit.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td>Descuento Préstamo / Adelanto</td>
+              <td style="text-align:right;">$${d.descPrestamo.toFixed(2)}</td>
+            </tr>
+            <tr>
+              <td></td>
+              <td></td>
+              <td>Faltas / Incapacidades</td>
+              <td style="text-align:right;">$${d.descIncid.toFixed(2)}</td>
+            </tr>
+            <tr style="background:#f1f5f9; font-weight:700;">
+              <td>TOTAL PERCEPCIONES</td>
+              <td style="text-align:right;">$${totPerc.toFixed(2)}</td>
+              <td>TOTAL DEDUCCIONES</td>
+              <td style="text-align:right;">$${totDed.toFixed(2)}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="text-align:right; font-size:1.15rem; font-weight:700; padding:10px; background:#e2e8f0; border-radius:6px;">
+          NETO RECIBIDO: $${d.neto.toFixed(2)} MXN
+        </div>
+
+        <p style="font-size:0.74rem; color:#475569; margin-top:14px;">
+          Recibí de conformidad de <strong>ARGUE MATERIALES S.A. DE C.V.</strong> la cantidad neta señalada por concepto de salarios y prestaciones devengadas en el periodo indicado, no reservándome acción ni derecho alguno que ejercitar.
+        </p>
+
+        <div class="recibo-footer">
+          <div class="firma-line">Firma de Conformidad del Trabajador</div>
+          <div class="firma-line">Autorización Recursos Humanos / Dirección</div>
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // MÓDULO 7: CALCULADORA FISCAL MX
+    // =========================================================================
+    function ejecutarCalculadora() {
+      const mensual = parseFloat(document.getElementById("calcMensual").value) || 0;
+      const antiguedad = Math.max(0, parseInt(document.getElementById("calcAntiguedad").value) || 0);
+      const diario = mensual / 30.4;
+      const semanal = diario * 7;
+
+      let diasVac = 12;
+      if (antiguedad === 2) diasVac = 14;
+      else if (antiguedad === 3) diasVac = 16;
+      else if (antiguedad === 4) diasVac = 18;
+      else if (antiguedad >= 5) diasVac = 20;
+
+      const anioActual = new Date().getFullYear();
+      const diasEmp = Object.values(STATE.diasEmpresa).filter(d => Number(d.anio) === anioActual).length;
+
+      // Factor integración mínimo LFT: 1 + (15 aguinaldo + (diasVac * 0.25)) / 365
+      const factor = 1 + (15 + (diasVac * 0.25)) / 365;
+      const sbc = diario * factor;
+      const primaVac = diario * diasVac * 0.25;
+
+      // Estimación referencial
+      const isrEst = semanal * 0.085;
+      const imssEst = sbc * 7 * 0.02375;
+
+      document.getElementById("calcFactor").value = factor.toFixed(4);
+      document.getElementById("calcDiario").value = `$${diario.toFixed(2)}`;
+      document.getElementById("calcSbc").value = `$${sbc.toFixed(2)}`;
+      document.getElementById("calcSemanal").value = `$${semanal.toFixed(2)}`;
+      document.getElementById("calcVacaciones").value = `${diasVac + diasEmp} días (${diasVac} LFT + ${diasEmp} Emp.)`;
+      document.getElementById("calcPrimaVac").value = `$${primaVac.toFixed(2)}`;
+      document.getElementById("calcIsrEst").value = `$${isrEst.toFixed(2)}`;
+      document.getElementById("calcImssEst").value = `$${imssEst.toFixed(2)}`;
+    }
+
+    // =========================================================================
+    // MÓDULO 8: CONFIGURACIÓN SIN CÓDIGO (BONOS, DÍAS EMPRESA Y USUARIOS)
+    // =========================================================================
+    function renderConfigBonos() {
+      const tbody = document.getElementById("tablaConfigBonosBody");
+      tbody.innerHTML = Object.entries(STATE.configBonos).map(([cat, r]) => `
+        <tr>
+          <td><strong>${cat}</strong></td>
+          <td><input type="number" id="cfg_min_${cat}" value="${r.minimo}" class="editable-cell"></td>
+          <td>
+            <select id="cfg_modo_${cat}">
+              <option value="EXCEDENTE" ${r.modo === "EXCEDENTE" ? "selected" : ""}>Solo Excedentes al Mínimo</option>
+              <option value="TOTAL" ${r.modo === "TOTAL" ? "selected" : ""}>Sobre Total de Viajes</option>
+            </select>
+          </td>
+          <td><input type="number" step="0.01" id="cfg_tar_${cat}" value="${r.tarifa}" class="editable-cell"></td>
+          <td><input type="number" step="0.01" id="cfg_ded_${cat}" value="${r.deduccion}" class="editable-cell"></td>
+          <td><input type="number" step="0.1" id="cfg_mul_${cat}" value="${r.multiplicador}" class="editable-cell"></td>
+        </tr>
+      `).join("");
+    }
+
+    async function guardarConfigBonos() {
+      for (const cat of Object.keys(STATE.configBonos)) {
+        STATE.configBonos[cat] = {
+          minimo: Number(document.getElementById(`cfg_min_${cat}`).value),
+          modo: document.getElementById(`cfg_modo_${cat}`).value,
+          tarifa: Number(document.getElementById(`cfg_tar_${cat}`).value),
+          deduccion: Number(document.getElementById(`cfg_ded_${cat}`).value),
+          multiplicador: Number(document.getElementById(`cfg_mul_${cat}`).value)
+        };
+      }
+      await fbPut("config_bonos", STATE.configBonos);
+      alert("Reglas de bonos actualizadas en Firebase.");
+    }
+
+    async function agregarDiaEmpresa() {
+      const anio = Number(document.getElementById("diaEmpAnio").value);
+      const fecha = document.getElementById("diaEmpFecha").value;
+      const desc = document.getElementById("diaEmpDesc").value.trim();
+      if (!fecha || !desc) return;
+      await fbPost("dias_empresa", { anio, fecha, desc });
+      document.getElementById("diaEmpDesc").value = "";
+      await cargarTodoDesdeFirebase();
+    }
+
+    function renderDiasEmpresa() {
+      const tbody = document.getElementById("tablaDiasEmpresaBody");
+      tbody.innerHTML = Object.entries(STATE.diasEmpresa).map(([k, d]) => `
+        <tr>
+          <td>${d.anio}</td>
+          <td>${d.fecha}</td>
+          <td>${d.desc}</td>
+          <td><button class="btn btn-danger btn-sm" onclick="eliminarRegistro('dias_empresa','${k}')">Eliminar</button></td>
+        </tr>
+      `).join("");
+    }
+
+    async function crearUsuarioSistema(e) {
+      e.preventDefault();
+      await fbPost("usuarios_sistema", {
+        nombre: document.getElementById("usrNombre").value.trim(),
+        correo: document.getElementById("usrCorreo").value.trim().toLowerCase(),
+        pass: document.getElementById("usrPass").value.trim(),
+        rol: document.getElementById("usrRol").value
+      });
+      e.target.reset();
+      await cargarTodoDesdeFirebase();
+    }
+
+    function renderUsuariosTabla() {
+      const tbody = document.getElementById("tablaUsuariosBody");
+      tbody.innerHTML = Object.entries(STATE.usuarios).map(([k, u]) => `
+        <tr>
+          <td>${u.nombre}</td>
+          <td>${u.correo}</td>
+          <td><span class="badge badge-warn">${u.rol}</span></td>
+          <td><button class="btn btn-danger btn-sm" onclick="eliminarRegistro('usuarios_sistema','${k}')">Eliminar</button></td>
+        </tr>
+      `).join("");
+    }
+
+    async function eliminarRegistro(tabla, key) {
+      if (!confirm("¿Confirmas eliminar este registro?")) return;
+      await fbDelete(`${tabla}/${key}`);
+      await cargarTodoDesdeFirebase();
+    }
+
+    function actualizarDashboardKPIs() {
+      const activos = Object.values(STATE.empleados).filter(e => e.estado === "Alta");
+      const nomBase = activos.reduce((acc, e) => acc + Number(e.sueldoSemanal || 0), 0);
+      const saldoPrest = Object.values(STATE.prestamos)
+        .filter(p => p.estatus === "Activo")
+        .reduce((acc, p) => acc + Number(p.saldoPendiente || 0), 0);
+
+      document.getElementById("kpiActivos").innerText = activos.length;
+      document.getElementById("kpiNominaBase").innerText = `$${nomBase.toLocaleString("es-MX", {minimumFractionDigits:2})}`;
+      document.getElementById("kpiPrestamos").innerText = `$${saldoPrest.toLocaleString("es-MX", {minimumFractionDigits:2})}`;
+      document.getElementById("kpiIncidencias").innerText = Object.keys(STATE.incidencias).length;
+    }
+  </script>
 </body>
 </html>
