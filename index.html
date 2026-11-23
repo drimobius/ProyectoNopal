@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ARGUE MATERIALES S.A. DE C.V. | Sistema Integral de Nóminas e Incidencias</title>
+  <title>ARGUE MATERIALES S.A. DE C.V. | Sistema Integral de Nóminas e Incidencias v2.0</title>
   <style>
     :root {
       --bg-main: #0f172a;
@@ -24,24 +24,24 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
     body { background-color: var(--bg-main); color: var(--text-main); display: flex; min-height: 100vh; }
 
-    /* LOGIN SCREEN */
-    #loginOverlay {
-      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.96); z-index: 9999;
+    /* OVERLAYS Y MODALES */
+    .overlay {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, 0.94); z-index: 9999;
       display: flex; align-items: center; justify-content: center; padding: 20px;
     }
-    .login-box {
+    .modal-box {
       background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px;
-      padding: 36px; width: 100%; max-width: 440px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6);
+      padding: 32px; width: 100%; max-width: 460px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.65);
     }
-    .login-box h1 { font-size: 1.4rem; color: var(--primary); margin-bottom: 4px; text-align: center; }
-    .login-box p { color: var(--text-muted); font-size: 0.88rem; text-align: center; margin-bottom: 24px; }
+    .modal-box h1, .modal-box h2 { color: var(--primary); margin-bottom: 6px; text-align: center; }
+    .modal-box p { color: var(--text-muted); font-size: 0.88rem; text-align: center; margin-bottom: 20px; }
 
     /* SIDEBAR */
     .sidebar {
-      width: 260px; background: var(--bg-card); border-right: 1px solid var(--border);
+      width: 265px; background: var(--bg-card); border-right: 1px solid var(--border);
       display: flex; flex-direction: column; padding: 20px 14px; flex-shrink: 0;
     }
-    .brand { padding: 0 10px 20px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+    .brand { padding: 0 10px 18px; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
     .brand h2 { font-size: 1.05rem; color: var(--primary); letter-spacing: 0.5px; }
     .brand span { font-size: 0.75rem; color: var(--text-muted); display: block; margin-top: 2px; }
     .role-pill {
@@ -50,10 +50,10 @@
       border: 1px solid rgba(245, 158, 11, 0.3);
     }
 
-    .nav-menu { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+    .nav-menu { display: flex; flex-direction: column; gap: 5px; flex: 1; overflow-y: auto; }
     .nav-btn {
       background: transparent; border: none; color: var(--text-muted); text-align: left;
-      padding: 11px 14px; border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 500;
+      padding: 10px 14px; border-radius: 8px; cursor: pointer; font-size: 0.88rem; font-weight: 500;
       display: flex; align-items: center; gap: 10px; transition: all 0.2s;
     }
     .nav-btn:hover { background: rgba(255,255,255,0.05); color: var(--text-main); }
@@ -69,7 +69,7 @@
     .sync-status { font-size: 0.8rem; color: var(--success); display: flex; align-items: center; gap: 6px; }
     .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); }
 
-    .content { padding: 28px; max-width: 1440px; width: 100%; margin: 0 auto; }
+    .content { padding: 26px; max-width: 1480px; width: 100%; margin: 0 auto; }
     .screen { display: none; animation: fadeIn 0.2s ease; }
     .screen.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
@@ -79,8 +79,8 @@
     .kpi-card {
       background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px;
     }
-    .kpi-card .label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
-    .kpi-card .value { font-size: 1.7rem; font-weight: 700; margin-top: 8px; color: var(--text-main); }
+    .kpi-card .label { font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .kpi-card .value { font-size: 1.65rem; font-weight: 700; margin-top: 8px; color: var(--text-main); }
 
     .card {
       background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius);
@@ -93,19 +93,19 @@
     .card-header h3 { font-size: 1.05rem; color: var(--primary); }
 
     /* FORMS */
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 14px; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(205px, 1fr)); gap: 14px; }
     .form-group { display: flex; flex-direction: column; gap: 6px; }
-    .form-group label { font-size: 0.8rem; color: var(--text-muted); font-weight: 500; }
+    .form-group label { font-size: 0.79rem; color: var(--text-muted); font-weight: 500; }
     input, select, textarea {
       background: var(--bg-input); border: 1px solid var(--border); color: var(--text-main);
-      padding: 10px 12px; border-radius: 8px; font-size: 0.9rem; outline: none; transition: border 0.2s;
+      padding: 9px 12px; border-radius: 8px; font-size: 0.88rem; outline: none; transition: border 0.2s;
     }
     input:focus, select:focus, textarea:focus { border-color: var(--primary); }
-    input[readonly] { opacity: 0.75; cursor: not-allowed; }
+    input[readonly] { opacity: 0.75; cursor: not-allowed; background: #090e1a; }
 
     /* BUTTONS */
     .btn {
-      padding: 10px 16px; border-radius: 8px; border: none; font-size: 0.88rem; font-weight: 600;
+      padding: 9px 15px; border-radius: 8px; border: none; font-size: 0.86rem; font-weight: 600;
       cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
     }
     .btn-primary { background: var(--primary); color: #0f172a; }
@@ -114,20 +114,27 @@
     .btn-secondary:hover { opacity: 0.9; }
     .btn-success { background: var(--success); color: #0f172a; }
     .btn-danger { background: var(--danger); color: #fff; }
+    .btn-warning { background: var(--warning); color: #0f172a; }
     .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
     .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
     .btn-sm { padding: 6px 10px; font-size: 0.78rem; }
 
+    /* SUBTABS */
+    .subtabs { display: flex; gap: 8px; margin-bottom: 18px; border-bottom: 1px solid var(--border); padding-bottom: 10px; flex-wrap: wrap; }
+    .subtab-btn {
+      background: var(--bg-input); border: 1px solid var(--border); color: var(--text-muted);
+      padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 0.84rem; font-weight: 600;
+    }
+    .subtab-btn.active { background: var(--secondary); color: #fff; border-color: var(--secondary); }
+
     /* TABLES */
     .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
-    th, td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+    th, td { padding: 11px 12px; text-align: left; border-bottom: 1px solid var(--border); }
     th { color: var(--text-muted); font-weight: 600; background: rgba(15, 23, 42, 0.5); white-space: nowrap; }
     tr:hover td { background: rgba(255,255,255,0.02); }
 
-    .badge {
-      padding: 3px 9px; border-radius: 999px; font-size: 0.74rem; font-weight: 600; display: inline-block;
-    }
+    .badge { padding: 3px 9px; border-radius: 999px; font-size: 0.73rem; font-weight: 600; display: inline-block; }
     .badge-alta { background: rgba(16, 185, 129, 0.15); color: var(--success); }
     .badge-baja { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
     .badge-warn { background: rgba(245, 158, 11, 0.15); color: var(--primary); }
@@ -135,43 +142,41 @@
 
     .alert-box {
       background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3);
-      padding: 12px 16px; border-radius: 8px; font-size: 0.85rem; color: #cbd5e1; margin-bottom: 16px;
+      padding: 12px 16px; border-radius: 8px; font-size: 0.84rem; color: #cbd5e1; margin-bottom: 16px;
     }
 
-    .editable-cell {
-      width: 95px; padding: 5px 8px; font-size: 0.84rem; text-align: right;
-    }
+    .editable-cell { width: 92px; padding: 5px 7px; font-size: 0.83rem; text-align: right; }
 
-    /* RECIBO DE NOMINA IMPRIMIBLE */
+    /* DOCUMENTOS IMPRIMIBLES (NÓMINA, PRÉSTAMOS, VACACIONES, BONO MENSUAL) */
     .recibo-paper {
-      background: #ffffff; color: #0f172a; padding: 36px; border-radius: 8px;
-      max-width: 820px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+      background: #ffffff; color: #0f172a; padding: 34px; border-radius: 8px;
+      max-width: 820px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.45);
     }
     .recibo-header {
       display: flex; justify-content: space-between; border-bottom: 2px solid #0f172a;
-      padding-bottom: 14px; margin-bottom: 18px;
+      padding-bottom: 12px; margin-bottom: 16px;
     }
-    .recibo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.85rem; margin-bottom: 20px; }
-    .recibo-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 0.86rem; }
+    .recibo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.85rem; margin-bottom: 18px; }
+    .recibo-table { width: 100%; border-collapse: collapse; margin-bottom: 18px; font-size: 0.85rem; }
     .recibo-table th { background: #e2e8f0; color: #0f172a; padding: 8px 10px; border: 1px solid #cbd5e1; }
     .recibo-table td { padding: 8px 10px; border: 1px solid #cbd5e1; color: #0f172a; }
-    .recibo-footer { margin-top: 40px; display: flex; justify-content: space-between; text-align: center; font-size: 0.82rem; }
+    .recibo-footer { margin-top: 42px; display: flex; justify-content: space-between; text-align: center; font-size: 0.82rem; }
     .firma-line { width: 240px; border-top: 1px solid #0f172a; padding-top: 6px; }
 
     @media print {
       body * { visibility: hidden; }
-      #reciboPrintArea, #reciboPrintArea * { visibility: visible; }
-      #reciboPrintArea { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; }
+      .printable-active, .printable-active * { visibility: visible; }
+      .printable-active { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; }
     }
   </style>
 </head>
 <body>
 
   <!-- OVERLAY DE LOGIN -->
-  <div id="loginOverlay">
-    <div class="login-box">
+  <div id="loginOverlay" class="overlay">
+    <div class="modal-box">
       <h1>ARGUE MATERIALES S.A. DE C.V.</h1>
-      <p>Sistema Integral de Control de Nóminas, Bonos e Incidencias</p>
+      <p>Sistema Integral de Nóminas, Préstamos, Vacaciones e Incidencias</p>
       <div class="form-group" style="margin-bottom: 14px;">
         <label>Usuario / Correo</label>
         <input type="text" id="loginUser" placeholder="ej. dueno@argue.com">
@@ -180,9 +185,25 @@
         <label>Contraseña</label>
         <input type="password" id="loginPass" placeholder="••••••••">
       </div>
-      <button class="btn btn-primary" style="width: 100%; margin-bottom: 12px;" onclick="iniciarSesion()">Ingresar al Sistema</button>
-      <button class="btn btn-outline btn-sm" style="width: 100%;" onclick="inicializarFirebaseBase()">Inicializar Base de Datos en Firebase (Primera vez)</button>
+      <button class="btn btn-primary" style="width: 100%; margin-bottom: 10px;" onclick="iniciarSesion()">Ingresar al Sistema</button>
+      <button class="btn btn-outline btn-sm" style="width: 100%;" onclick="inicializarFirebaseBase()">Inicializar / Actualizar Base en Firebase</button>
       <p id="loginMsg" style="margin-top: 12px; font-size: 0.8rem; color: var(--warning);"></p>
+    </div>
+  </div>
+
+  <!-- MODAL DE AUTORIZACIÓN DE ADMINISTRADOR PARA EXCEDENTE DE PRÉSTAMO -->
+  <div id="modalAuthAdmin" class="overlay" style="display: none;">
+    <div class="modal-box" style="border-color: var(--danger);">
+      <h2 style="color: var(--danger);">⚠️ Límite de Préstamo Excedido</h2>
+      <p id="authAdminDetalle" style="color: var(--text-main); margin-bottom: 16px;"></p>
+      <div class="form-group" style="margin-bottom: 16px;">
+        <label>Contraseña de Administrador (Admin / SuperAdmin) para Autorizar Excepción:</label>
+        <input type="password" id="authAdminPass" placeholder="Ingresa contraseña de Administrador">
+      </div>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn btn-danger" style="flex: 1;" onclick="cancelarAutorizacionPrestamo()">Cancelar Operación</button>
+        <button class="btn btn-success" style="flex: 1;" onclick="confirmarAutorizacionPrestamo()">Autorizar Excepción</button>
+      </div>
     </div>
   </div>
 
@@ -197,11 +218,12 @@
     <nav class="nav-menu" id="navMenu">
       <button class="nav-btn active" data-tab="dashboard" data-roles="SuperAdmin,Admin,RH">📊 Resumen General</button>
       <button class="nav-btn" data-tab="empleados" data-roles="SuperAdmin,Admin,RH">👷 Alta y Plantilla</button>
-      <button class="nav-btn" data-tab="bonos" data-roles="SuperAdmin,Admin,RH">🚛 Bonos Semanales</button>
-      <button class="nav-btn" data-tab="prestamos" data-roles="SuperAdmin,Admin,RH,Operativo">💸 Préstamos y Adelantos</button>
-      <button class="nav-btn" data-tab="incidencias" data-roles="SuperAdmin,Admin,RH">📅 Incidencias y Vacaciones</button>
+      <button class="nav-btn" data-tab="bonos" data-roles="SuperAdmin,Admin,RH,GerenteOperativo">🚛 Bonos Viajes y Mensual</button>
+      <button class="nav-btn" data-tab="prestamos" data-roles="SuperAdmin,Admin,RH,GerenteOperativo,Operativo">💸 Préstamos Semanales y Fijos</button>
+      <button class="nav-btn" data-tab="incidencias" data-roles="SuperAdmin,Admin,RH,GerenteOperativo">⏱️ Incidencias y Horas Extras</button>
+      <button class="nav-btn" data-tab="vacaciones" data-roles="SuperAdmin,Admin,RH,GerenteOperativo">🌴 Control de Vacaciones</button>
       <button class="nav-btn" data-tab="nomina" data-roles="SuperAdmin,Admin,RH">💰 Cálculo de Nómina</button>
-      <button class="nav-btn" data-tab="recibos" data-roles="SuperAdmin,Admin,RH,Operativo">🧾 Recibos de Nómina</button>
+      <button class="nav-btn" data-tab="recibos" data-roles="SuperAdmin,Admin,RH,Operativo">🧾 Recibos Semanal / Mensual</button>
       <button class="nav-btn" data-tab="calculadora" data-roles="SuperAdmin,Admin,RH">🧮 Calculadora Fiscal MX</button>
       <button class="nav-btn" data-tab="configuracion" data-roles="SuperAdmin,Admin">⚙️ Configuración y Usuarios</button>
     </nav>
@@ -240,7 +262,7 @@
             <div class="value" id="kpiPrestamos">$0.00</div>
           </div>
           <div class="kpi-card">
-            <div class="label">Incidencias Semana Actual</div>
+            <div class="label">Incidencias Registradas</div>
             <div class="value" id="kpiIncidencias">0</div>
           </div>
         </div>
@@ -335,28 +357,28 @@
               </div>
               <div class="form-group">
                 <label>Tipo de Empleado *</label>
-                <select id="empTipo" required></select>
+                <select id="empTipo" required onchange="ajustarDiasPorTipoEmpleado()"></select>
               </div>
               <div class="form-group">
-                <label>Esquema de Bono Asignado *</label>
+                <label>Esquema de Bono Semanal *</label>
                 <select id="empEsquemaBono" required>
                   <option value="CHOFERES">Choferes (Viajes > 5 * $120)</option>
                   <option value="GERENTE">Gerente ((Viajes * 50 - 100) * 2)</option>
                   <option value="ADMINISTRATIVO">Administrativo (Viajes * 50 - 100)</option>
                   <option value="RH">Recursos Humanos ((Viajes * 50 - 100) * 1.5)</option>
-                  <option value="NINGUNO">Sin Bono</option>
+                  <option value="NINGUNO">Sin Bono Semanal</option>
                 </select>
               </div>
               <div class="form-group">
-                <label>Jornada Laboral *</label>
+                <label>Jornada Laboral (48 hrs/sem) *</label>
                 <select id="empJornada" required>
-                  <option value="Diurna (8 hrs)">Diurna (8 hrs)</option>
-                  <option value="Mixta (7.5 hrs)">Mixta (7.5 hrs)</option>
-                  <option value="Nocturna (7 hrs)">Nocturna (7 hrs)</option>
+                  <option value="Diurna (48 hrs/sem)">Diurna (48 hrs/sem)</option>
+                  <option value="Mixta (45 hrs/sem)">Mixta (45 hrs/sem)</option>
+                  <option value="Nocturna (42 hrs/sem)">Nocturna (42 hrs/sem)</option>
                 </select>
               </div>
               <div class="form-group">
-                <label>Días Laborados / Semana *</label>
+                <label>Días Laborados/Sem (5 Admin / 6 Resto) *</label>
                 <input type="number" id="empDiasSem" value="6" min="1" max="7" required>
               </div>
               <div class="form-group">
@@ -370,6 +392,22 @@
               <div class="form-group">
                 <label>Sueldo Base Semanal (Diario * 7)</label>
                 <input type="number" step="0.01" id="empSueldoSemanal" readonly>
+              </div>
+              <div class="form-group">
+                <label style="color: var(--primary);">Límite Máx. Préstamo Semanal (MXN) *</label>
+                <input type="number" step="0.01" id="empLimiteSemanal" value="1500" required>
+              </div>
+              <div class="form-group">
+                <label style="color: var(--primary);">Límite Máx. Préstamo Fijo (MXN) *</label>
+                <input type="number" step="0.01" id="empLimiteFijo" value="5000" required>
+              </div>
+              <div class="form-group">
+                <label style="color: var(--success);">Bono Mensual Fijo No Gravado (MXN) *</label>
+                <input type="number" step="0.01" id="empBonoMensual" value="0" required>
+              </div>
+              <div class="form-group">
+                <label>Días Vacaciones Tomados en el Año</label>
+                <input type="number" id="empVacTomadas" value="0" min="0">
               </div>
               <div class="form-group">
                 <label>ISR Semanal Fijo (MXN)</label>
@@ -404,10 +442,10 @@
                   <th># Emp</th>
                   <th>Nombre Completo</th>
                   <th>Puesto / Tipo</th>
-                  <th>Esquema Bono</th>
-                  <th>Antigüedad / Vac. LFT</th>
-                  <th>Sueldo Mensual</th>
-                  <th>Base Semanal (7d)</th>
+                  <th>Límites Préstamo (Sem / Fijo)</th>
+                  <th>Bono Mensual</th>
+                  <th>Balance Vacaciones</th>
+                  <th>Base Semanal</th>
                   <th>Estatus</th>
                   <th>Acciones</th>
                 </tr>
@@ -418,151 +456,243 @@
         </div>
       </section>
 
-      <!-- 3. BONOS SEMANALES -->
+      <!-- 3. BONOS SEMANALES Y BONO DE DESEMPEÑO MENSUAL -->
       <section id="tab-bonos" class="screen">
-        <div class="card">
-          <div class="card-header">
-            <h3>Registro y Cálculo Automático de Bonos por Viajes / Camiones</h3>
-          </div>
-          <div class="alert-box">
-            <strong>Reglas activas:</strong> El cálculo toma automáticamente el esquema asignado al empleado (Choferes, Gerente, Administrativo o RH) y los parámetros configurables en tiempo real. Todos los cálculos quedan guardados en el historial.
-          </div>
-
-          <form onsubmit="registrarBonoSemanal(event)">
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Número de Empleado *</label>
-                <select id="bonoEmpSelect" required onchange="actualizarPreviewBono()"></select>
-              </div>
-              <div class="form-group">
-                <label>Año *</label>
-                <input type="number" id="bonoAnio" value="2026" required>
-              </div>
-              <div class="form-group">
-                <label>Semana del Año (1-53) *</label>
-                <input type="number" id="bonoSemana" min="1" max="53" required>
-              </div>
-              <div class="form-group">
-                <label>Viajes Realizados / Camiones Recibidos *</label>
-                <input type="number" id="bonoViajes" min="0" required oninput="actualizarPreviewBono()">
-              </div>
-              <div class="form-group">
-                <label>Categoría Detectada</label>
-                <input type="text" id="bonoCategoriaPreview" readonly>
-              </div>
-              <div class="form-group">
-                <label>Bono Calculado (MXN)</label>
-                <input type="text" id="bonoMontoPreview" readonly style="font-weight: 700; color: var(--success);">
-              </div>
-            </div>
-            <div style="margin-top: 16px;">
-              <button type="submit" class="btn btn-primary">✅ Guardar Bono en Historial</button>
-            </div>
-          </form>
+        <div class="subtabs">
+          <button class="subtab-btn active" onclick="cambiarSubtabBonos('semanal', this)">🚛 Bonos Semanales por Viajes</button>
+          <button class="subtab-btn" onclick="cambiarSubtabBonos('mensual', this)">🏆 Bono Mensual Fijo (No Gravado)</button>
         </div>
 
-        <div class="card">
-          <div class="card-header">
-            <h3>Historial de Bonos Calculados</h3>
+        <!-- SUBTAB BONO SEMANAL -->
+        <div id="subtab-bono-semanal">
+          <div class="card">
+            <div class="card-header">
+              <h3>Registro y Cálculo Automático de Bonos por Viajes / Camiones</h3>
+            </div>
+            <form onsubmit="registrarBonoSemanal(event)">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Número de Empleado *</label>
+                  <select id="bonoEmpSelect" required onchange="actualizarPreviewBono()"></select>
+                </div>
+                <div class="form-group">
+                  <label>Año *</label>
+                  <input type="number" id="bonoAnio" value="2026" required>
+                </div>
+                <div class="form-group">
+                  <label>Semana del Año (1-53) *</label>
+                  <input type="number" id="bonoSemana" min="1" max="53" required>
+                </div>
+                <div class="form-group">
+                  <label>Viajes Realizados / Camiones Recibidos *</label>
+                  <input type="number" id="bonoViajes" min="0" required oninput="actualizarPreviewBono()">
+                </div>
+                <div class="form-group">
+                  <label>Categoría Detectada</label>
+                  <input type="text" id="bonoCategoriaPreview" readonly>
+                </div>
+                <div class="form-group">
+                  <label>Bono Calculado (MXN)</label>
+                  <input type="text" id="bonoMontoPreview" readonly style="font-weight: 700; color: var(--success);">
+                </div>
+              </div>
+              <div style="margin-top: 16px;">
+                <button type="submit" class="btn btn-primary">✅ Guardar Bono Semanal en Historial</button>
+              </div>
+            </form>
           </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Año / Semana</th>
-                  <th># Emp</th>
-                  <th>Empleado</th>
-                  <th>Categoría Bono</th>
-                  <th>Viajes / Camiones</th>
-                  <th>Bono Calculado</th>
-                  <th>Acción</th>
-                </tr>
-              </thead>
-              <tbody id="tablaBonosBody"></tbody>
-            </table>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Historial de Bonos Semanales Calculados</h3>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Año / Semana</th>
+                    <th># Emp</th>
+                    <th>Empleado</th>
+                    <th>Categoría Bono</th>
+                    <th>Viajes / Camiones</th>
+                    <th>Bono Calculado</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaBonosBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBTAB BONO MENSUAL FIJO -->
+        <div id="subtab-bono-mensual" style="display: none;">
+          <div class="card">
+            <div class="card-header">
+              <h3>Gestión de Bono Mensual Fijo (No Gravado)</h3>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <label style="font-size: 0.82rem;">Mes / Año:</label>
+                <input type="month" id="bonoMensualPeriodo" value="2026-11">
+                <button class="btn btn-success btn-sm" onclick="guardarCorteBonoMensual()">💾 Guardar Corte Mensual para Recibos</button>
+              </div>
+            </div>
+            <div class="alert-box">
+              <strong>Regla de Bono Mensual:</strong> Se toma íntegro del perfil de cada empleado sin descuentos por incidencias. El Administrador puede ajustar el monto directamente en la tabla antes de guardar el corte mensual.
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th># Emp</th>
+                    <th>Empleado</th>
+                    <th>Puesto</th>
+                    <th>Bono Base Perfil</th>
+                    <th>Monto Autorizado a Pagar (Editable)</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaBonoMensualBody"></tbody>
+              </table>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- 4. PRÉSTAMOS Y ADELANTOS (ACCESO OPERATIVO SIN SUELDOS) -->
+      <!-- 4. PRÉSTAMOS SEMANALES Y PRÉSTAMOS FIJOS -->
       <section id="tab-prestamos" class="screen">
-        <div class="card">
-          <div class="card-header">
-            <h3>Registro de Préstamos y Adelantos de Nómina</h3>
-          </div>
-          <form onsubmit="registrarPrestamo(event)">
-            <div class="form-grid">
-              <div class="form-group">
-                <label>Número de Empleado *</label>
-                <select id="prestamoEmpSelect" required></select>
-              </div>
-              <div class="form-group">
-                <label>Tipo de Préstamo *</label>
-                <select id="prestamoTipo" required onchange="ajustarCamposPrestamo()">
-                  <option value="Adelanto Semanal">Adelanto Semanal (Descuento 100% siguiente nómina)</option>
-                  <option value="Convencional">Préstamo Convencional (A plazos semanales)</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Monto Total Solicitado (MXN) *</label>
-                <input type="number" step="0.01" id="prestamoTotal" required oninput="calcularDescuentoPrestamo()">
-              </div>
-              <div class="form-group">
-                <label>Semanas a Liquidar *</label>
-                <input type="number" id="prestamoSemanas" value="1" min="1" required oninput="calcularDescuentoPrestamo()">
-              </div>
-              <div class="form-group">
-                <label>Descuento Semanal (MXN) *</label>
-                <input type="number" step="0.01" id="prestamoDescuentoSem" required>
-              </div>
-              <div class="form-group">
-                <label>Fecha de Solicitud *</label>
-                <input type="date" id="prestamoFecha" required>
-              </div>
-            </div>
-            <div style="margin-top: 16px;">
-              <button type="submit" class="btn btn-primary">💸 Registrar Préstamo</button>
-            </div>
-          </form>
+        <div class="subtabs">
+          <button class="subtab-btn active" onclick="cambiarSubtabPrestamos('registro', this)">💸 Solicitud y Control de Préstamos</button>
+          <button class="subtab-btn" onclick="cambiarSubtabPrestamos('reporteFijos', this)">📑 Reporte Ejecutivo Préstamos Fijos</button>
+          <button class="subtab-btn" onclick="cambiarSubtabPrestamos('reciboPrestamo', this)">🖨️ Recibo Imprimible de Préstamo</button>
         </div>
 
-        <div class="card">
-          <div class="card-header">
-            <h3>Control de Préstamos Activos e Historial</h3>
+        <!-- SUBTAB REGISTRO -->
+        <div id="subtab-prest-registro">
+          <div class="card">
+            <div class="card-header">
+              <h3>Registro de Préstamo Semanal (Adelanto) y Préstamo Fijo</h3>
+            </div>
+            <form onsubmit="intentarRegistrarPrestamo(event)">
+              <div class="form-grid">
+                <div class="form-group">
+                  <label>Número de Empleado *</label>
+                  <select id="prestamoEmpSelect" required onchange="mostrarInfoLimitesPrestamo()"></select>
+                </div>
+                <div class="form-group">
+                  <label>Tipo de Préstamo *</label>
+                  <select id="prestamoTipo" required onchange="ajustarCamposPrestamo()">
+                    <option value="Préstamo Semanal">Préstamo Semanal (Adelanto íntegro 1 semana)</option>
+                    <option value="Préstamo Fijo">Préstamo Fijo (A plazos semanales)</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Límite / Saldo Insoluto Actual</label>
+                  <input type="text" id="prestamoLimiteInfo" readonly style="color: var(--primary); font-weight: 600;">
+                </div>
+                <div class="form-group">
+                  <label>Monto Total Solicitado (MXN) *</label>
+                  <input type="number" step="0.01" id="prestamoTotal" required oninput="calcularDescuentoPrestamo()">
+                </div>
+                <div class="form-group">
+                  <label>Semanas a Liquidar *</label>
+                  <input type="number" id="prestamoSemanas" value="1" min="1" readonly required oninput="calcularDescuentoPrestamo()">
+                </div>
+                <div class="form-group">
+                  <label>Descuento Semanal (MXN) *</label>
+                  <input type="number" step="0.01" id="prestamoDescuentoSem" required>
+                </div>
+                <div class="form-group">
+                  <label>Semana / Fecha de Solicitud *</label>
+                  <input type="date" id="prestamoFecha" required>
+                </div>
+              </div>
+              <div style="margin-top: 16px;">
+                <button type="submit" class="btn btn-primary">💸 Registrar Préstamo y Generar Recibo</button>
+              </div>
+            </form>
           </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th># Emp</th>
-                  <th>Empleado</th>
-                  <th>Tipo</th>
-                  <th>Monto Total</th>
-                  <th>Descuento Semanal</th>
-                  <th>Saldo Pendiente</th>
-                  <th>Estatus</th>
-                  <th>Acción</th>
-                </tr>
-              </thead>
-              <tbody id="tablaPrestamosBody"></tbody>
-            </table>
+
+          <div class="card">
+            <div class="card-header">
+              <h3>Historial General de Préstamos</h3>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Fecha</th>
+                    <th># Emp</th>
+                    <th>Empleado</th>
+                    <th>Tipo</th>
+                    <th>Monto Total</th>
+                    <th>Desc. Semanal</th>
+                    <th>Saldo Pendiente</th>
+                    <th>Estatus</th>
+                    <th>Recibo / Acción</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaPrestamosBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBTAB REPORTE PRÉSTAMOS FIJOS -->
+        <div id="subtab-prest-reporteFijos" style="display: none;">
+          <div class="card">
+            <div class="card-header">
+              <h3>Reporte de Préstamos Fijos (Saldos, Abonos del Mes y Límites Acordados)</h3>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th># Emp</th>
+                    <th>Empleado</th>
+                    <th>Límite Fijo Acordado</th>
+                    <th>Saldo Inicial (Otorgado)</th>
+                    <th>Nuevos Préstamos Activos</th>
+                    <th>Abonado Acumulado</th>
+                    <th>Saldo Insoluto Actual</th>
+                    <th>Disponible s/ Límite</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaReportePrestamosFijosBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SUBTAB RECIBO DE PRÉSTAMO IMPRIMIBLE -->
+        <div id="subtab-prest-reciboPrestamo" style="display: none;">
+          <div class="card">
+            <div class="card-header">
+              <h3>Comprobante Oficial de Préstamo / Adelanto</h3>
+              <button class="btn btn-primary" onclick="imprimirDocumento('reciboPrestamoPaper')">🖨️ Imprimir Recibo de Préstamo</button>
+            </div>
+            <div id="reciboPrestamoPaper" class="recibo-paper">
+              <p style="text-align: center; color: #64748b;">Registra un préstamo o selecciona "Ver Recibo" en la tabla para visualizar el comprobante.</p>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- 5. INCIDENCIAS, VACACIONES Y CHECADOR -->
+      <!-- 5. INCIDENCIAS Y HORAS EXTRAS -->
       <section id="tab-incidencias" class="screen">
         <div class="card">
           <div class="card-header">
-            <h3>Registro de Incidencias Semanales</h3>
-            <button class="btn btn-warning btn-sm" onclick="abrirModalSinChecada()">⚠️ Registrar Ausencia de Checada / Justificar</button>
+            <h3>Registro de Incidencias y Cálculo de Horas Extras (LFT 48 hrs/sem)</h3>
+            <button class="btn btn-warning btn-sm" onclick="abrirModalSinChecada()">⚠️ Registrar Ausencia de Checada</button>
+          </div>
+
+          <div class="alert-box">
+            <strong>Fórmula Horas Extras LFT:</strong> Jornada base de 48 hrs dividida entre <strong>5 días para Administrativos</strong> (9.6 hrs/día) y <strong>6 días para Choferes y resto</strong> (8 hrs/día). Las primeras <strong>9 horas extras</strong> de la semana se pagan al <strong>doble (200%)</strong> y de la <strong>hora 10 en adelante al triple (300%)</strong>.
           </div>
 
           <form onsubmit="registrarIncidencia(event)">
             <div class="form-grid">
               <div class="form-group">
                 <label>Empleado *</label>
-                <select id="incEmpSelect" required></select>
+                <select id="incEmpSelect" required onchange="actualizarPreviewIncidencia()"></select>
               </div>
               <div class="form-group">
                 <label>Año *</label>
@@ -574,11 +704,11 @@
               </div>
               <div class="form-group">
                 <label>Tipo de Incidencia *</label>
-                <select id="incTipo" required>
+                <select id="incTipo" required onchange="actualizarPreviewIncidencia()">
+                  <option value="Horas Extras">Horas Extras (Cálculo LFT Dobles y Triples)</option>
                   <option value="Falta Injustificada">Falta Injustificada (Descuenta 1 día)</option>
                   <option value="Incapacidad">Incapacidad IMSS (Descuenta 100% días)</option>
                   <option value="Retardo">Retardo (Informativo, sin descuento)</option>
-                  <option value="Vacaciones">Vacaciones (Disfruta días + 25% Prima)</option>
                   <option value="Dia Sin Goce">Día Sin Goce de Sueldo (Descuenta 1 día)</option>
                   <option value="Dia Con Goce">Día Con Goce de Sueldo (Sin descuento)</option>
                   <option value="Sin Registro Checador">Sin Registro en Checador (Especificar causa)</option>
@@ -586,24 +716,27 @@
                 </select>
               </div>
               <div class="form-group">
-                <label>Cantidad de Días / Eventos *</label>
-                <input type="number" id="incDias" value="1" min="1" max="7" required>
+                <label id="lblIncCantidad">Cantidad de Horas Extras *</label>
+                <input type="number" step="0.5" id="incDias" value="1" min="0.5" required oninput="actualizarPreviewIncidencia()">
               </div>
               <div class="form-group">
+                <label>Cálculo Estimado (MXN)</label>
+                <input type="text" id="incPreviewMonto" readonly style="font-weight: 700; color: var(--primary);">
+              </div>
+              <div class="form-group" style="grid-column: 1 / -1;">
                 <label>Observaciones / Causa Detallada *</label>
-                <input type="text" id="incMotivo" required placeholder="Ej. Incapacidad por enfermedad general / Falta checada entrada">
+                <input type="text" id="incMotivo" required placeholder="Ej. Apoyo en descarga fuera de turno / Motivo de ausencia">
               </div>
             </div>
-            <div style="margin-top: 16px; display: flex; gap: 10px; align-items: center;">
-              <button type="submit" class="btn btn-primary">📌 Registrar Incidencia</button>
-              <span style="font-size: 0.78rem; color: var(--text-muted);">* Módulo de importación automática de reloj checador preparado para versión futura.</span>
+            <div style="margin-top: 16px;">
+              <button type="submit" class="btn btn-primary">📌 Registrar Incidencia / Tiempo Extra</button>
             </div>
           </form>
         </div>
 
         <div class="card">
           <div class="card-header">
-            <h3>Bitácora de Incidencias y Control de Vacaciones</h3>
+            <h3>Bitácora de Incidencias y Tiempo Extra</h3>
           </div>
           <div class="table-wrap">
             <table>
@@ -613,7 +746,7 @@
                   <th># Emp</th>
                   <th>Empleado</th>
                   <th>Incidencia</th>
-                  <th>Días</th>
+                  <th>Cant. (Hrs/Días)</th>
                   <th>Impacto Económico</th>
                   <th>Causa / Nota</th>
                   <th>Acción</th>
@@ -625,7 +758,87 @@
         </div>
       </section>
 
-      <!-- 6. CÁLCULO Y CIERRE DE NÓMINA SEMANAL -->
+      <!-- 6. CONTROL DE VACACIONES Y RECIBOS ESPECÍFICOS -->
+      <section id="tab-vacaciones" class="screen">
+        <div class="card">
+          <div class="card-header">
+            <h3>Movimiento y Solicitud de Vacaciones</h3>
+          </div>
+          <form onsubmit="registrarMovimientoVacaciones(event)">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Empleado *</label>
+                <select id="vacEmpSelect" required onchange="actualizarBalanceVacacionesPreview()"></select>
+              </div>
+              <div class="form-group">
+                <label>Balance Disponible Actual</label>
+                <input type="text" id="vacBalancePreview" readonly style="color: var(--success); font-weight: 700;">
+              </div>
+              <div class="form-group">
+                <label>Tipo de Trámite *</label>
+                <select id="vacTipoMovimiento" required>
+                  <option value="Goce de Vacaciones">Solicitud de Goce de Vacaciones (Descuenta saldo)</option>
+                  <option value="Pago de Vacaciones">Pago / Liquidación de Vacaciones + Prima 25% (Descuenta saldo)</option>
+                  <option value="Revision Anual">Revisión Anual de Balance (Solo comprobante informativo)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Año / Semana de Aplicación *</label>
+                <div style="display: flex; gap: 6px;">
+                  <input type="number" id="vacAnio" value="2026" style="width: 50%;" required>
+                  <input type="number" id="vacSemana" value="1" min="1" max="53" style="width: 50%;" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Días a Tomar / Pagar *</label>
+                <input type="number" id="vacDiasSolicitados" value="1" min="0" required>
+              </div>
+              <div class="form-group">
+                <label>Fecha Inicio / Observaciones *</label>
+                <input type="text" id="vacObservaciones" required placeholder="Ej. Del 14 al 18 de Diciembre">
+              </div>
+            </div>
+            <div style="margin-top: 16px;">
+              <button type="submit" class="btn btn-primary">🌴 Registrar Movimiento y Generar Recibo Vacacional</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Balance Anual de Vacaciones por Empleado (Incluye Descuento Días No Oficiales Empresa)</h3>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th># Emp</th>
+                  <th>Empleado</th>
+                  <th>Antigüedad</th>
+                  <th>Días LFT</th>
+                  <th>Días No Oficiales Desc.</th>
+                  <th>Días Tomados/Pagados</th>
+                  <th>Saldo Disponible</th>
+                  <th>Recibo</th>
+                </tr>
+              </thead>
+              <tbody id="tablaBalanceVacacionesBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Vista Previa Recibo Oficial de Vacaciones</h3>
+            <button class="btn btn-primary" onclick="imprimirDocumento('reciboVacacionesPaper')">🖨️ Imprimir Recibo de Vacaciones</button>
+          </div>
+          <div id="reciboVacacionesPaper" class="recibo-paper">
+            <p style="text-align: center; color: #64748b;">Registra un trámite vacacional o haz clic en "Imprimir Estado" en la tabla superior.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. CÁLCULO Y CIERRE DE NÓMINA SEMANAL -->
       <section id="tab-nomina" class="screen">
         <div class="card">
           <div class="card-header">
@@ -640,19 +853,16 @@
             </div>
           </div>
 
-          <div class="alert-box">
-            <strong>Modo de Auditoría Activo:</strong> Los montos se calculan automáticamente cruzando Sueldo Base (7 días), Bonos de la semana, Préstamos activos, Incidencias y Deducciones de ley. Los administradores pueden editar directamente cualquier celda numérica antes de cerrar la nómina.
-          </div>
-
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
                   <th># Emp</th>
                   <th>Empleado</th>
-                  <th>Base Sem (7d)</th>
+                  <th>Base (7d)</th>
                   <th>Bono Viajes</th>
-                  <th>Prima Vac.</th>
+                  <th>Horas Extras</th>
+                  <th>Prima/Vac</th>
                   <th>Desc. Incid.</th>
                   <th>ISR</th>
                   <th>IMSS</th>
@@ -667,31 +877,57 @@
         </div>
       </section>
 
-      <!-- 7. RECIBOS DE NÓMINA (ACCESO OPERATIVO E IMPRESIÓN) -->
+      <!-- 8. RECIBOS DE NÓMINA (SEMANAL Y MENSUAL BONO NO GRAVADO) -->
       <section id="tab-recibos" class="screen">
-        <div class="card">
-          <div class="card-header">
-            <h3>Emisión e Impresión de Recibo de Nómina</h3>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-              <select id="reciboNominaSelect" onchange="cargarEmpleadosDeNominaCerrada()">
-                <option value="">-- Selecciona Nómina Cerrada --</option>
-              </select>
-              <select id="reciboEmpSelect" onchange="renderReciboPreview()">
-                <option value="">-- Selecciona Empleado --</option>
-              </select>
-              <button class="btn btn-primary" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+        <div class="subtabs">
+          <button class="subtab-btn active" onclick="cambiarSubtabRecibos('semanal', this)">🧾 Recibo de Nómina Semanal</button>
+          <button class="subtab-btn" onclick="cambiarSubtabRecibos('mensual', this)">🏆 Recibo Mensual (Bono No Gravado)</button>
+        </div>
+
+        <!-- RECIBO SEMANAL -->
+        <div id="subtab-rec-semanal">
+          <div class="card">
+            <div class="card-header">
+              <h3>Emisión de Recibo Semanal</h3>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <select id="reciboNominaSelect" onchange="cargarEmpleadosDeNominaCerrada()">
+                  <option value="">-- Selecciona Nómina Cerrada --</option>
+                </select>
+                <select id="reciboEmpSelect" onchange="renderReciboSemanalPreview()">
+                  <option value="">-- Selecciona Empleado --</option>
+                </select>
+                <button class="btn btn-primary" onclick="imprimirDocumento('reciboSemanalPaper')">🖨️ Imprimir Recibo Semanal</button>
+              </div>
+            </div>
+            <div id="reciboSemanalPaper" class="recibo-paper">
+              <p style="text-align: center; color: #64748b;">Selecciona una nómina cerrada y un empleado para generar el recibo semanal.</p>
             </div>
           </div>
+        </div>
 
-          <div id="reciboPrintArea">
-            <div class="recibo-paper" id="reciboDocumento">
-              <p style="text-align: center; color: #64748b;">Selecciona una nómina cerrada y un empleado para generar el recibo oficial.</p>
+        <!-- RECIBO MENSUAL BONO NO GRAVADO -->
+        <div id="subtab-rec-mensual" style="display: none;">
+          <div class="card">
+            <div class="card-header">
+              <h3>Emisión de Recibo Mensual de Bono Fijo (No Gravado)</h3>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <select id="reciboMensualCorteSelect" onchange="cargarEmpleadosCorteMensual()">
+                  <option value="">-- Selecciona Corte Mensual --</option>
+                </select>
+                <select id="reciboMensualEmpSelect" onchange="renderReciboMensualPreview()">
+                  <option value="">-- Selecciona Empleado --</option>
+                </select>
+                <button class="btn btn-primary" onclick="imprimirDocumento('reciboMensualPaper')">🖨️ Imprimir Recibo Mensual</button>
+              </div>
+            </div>
+            <div id="reciboMensualPaper" class="recibo-paper">
+              <p style="text-align: center; color: #64748b;">Selecciona un corte mensual y un empleado para generar el recibo independiente de bono no gravado.</p>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- 8. CALCULADORA FISCAL MX -->
+      <!-- 9. CALCULADORA FISCAL MX -->
       <section id="tab-calculadora" class="screen">
         <div class="card">
           <div class="card-header">
@@ -723,31 +959,23 @@
               <input type="text" id="calcSemanal" readonly>
             </div>
             <div class="form-group">
-              <label>Días Vacaciones LFT + Días Empresa</label>
-              <input type="text" id="calcVacaciones" readonly>
+              <label>Valor Hora Extra Doble / Triple (6 días)</label>
+              <input type="text" id="calcHoraExtra" readonly>
             </div>
             <div class="form-group">
               <label>Prima Vacacional Anual (25%)</label>
               <input type="text" id="calcPrimaVac" readonly>
             </div>
-            <div class="form-group">
-              <label>Estimación ISR Semanal (Referencia)</label>
-              <input type="text" id="calcIsrEst" readonly>
-            </div>
-            <div class="form-group">
-              <label>Estimación Cuota Obrera IMSS Semanal</label>
-              <input type="text" id="calcImssEst" readonly>
-            </div>
           </div>
         </div>
       </section>
 
-      <!-- 9. CONFIGURACIÓN DEL SISTEMA (SIN TOCAR CÓDIGO) -->
+      <!-- 10. CONFIGURACIÓN DEL SISTEMA -->
       <section id="tab-configuracion" class="screen">
         <!-- CONFIGURACIÓN DE BONOS -->
         <div class="card">
           <div class="card-header">
-            <h3>Parámetros de Cálculo de Bonos (Editables sin código)</h3>
+            <h3>Parámetros de Cálculo de Bonos Semanales (Editables sin código)</h3>
             <button class="btn btn-primary btn-sm" onclick="guardarConfigBonos()">💾 Guardar Reglas de Bonos</button>
           </div>
           <div class="table-wrap">
@@ -767,10 +995,10 @@
           </div>
         </div>
 
-        <!-- DÍAS DE VACACIONES EXTRA OTORGADOS POR LA EMPRESA (APLICAN A TODOS) -->
+        <!-- DÍAS NO OFICIALES OTORGADOS POR LA EMPRESA (SE DESCUENTAN DEL BALANCE VACACIONAL) -->
         <div class="card">
           <div class="card-header">
-            <h3>Días Adicionales Otorgados por la Empresa (Aplican a toda la plantilla por año)</h3>
+            <h3>Días No Oficiales Otorgados por la Empresa (Se descuentan del balance anual de vacaciones)</h3>
           </div>
           <div class="form-grid" style="margin-bottom: 14px;">
             <div class="form-group">
@@ -783,7 +1011,7 @@
             </div>
             <div class="form-group">
               <label>Descripción / Motivo</label>
-              <input type="text" id="diaEmpDesc" placeholder="Ej. Día de la Virgen de Guadalupe">
+              <input type="text" id="diaEmpDesc" placeholder="Ej. 12 de Diciembre (Día no oficial)">
             </div>
             <div class="form-group" style="justify-content: flex-end;">
               <button class="btn btn-secondary" onclick="agregarDiaEmpresa()">+ Agregar Día Global</button>
@@ -827,8 +1055,9 @@
                 <label>Nivel de Acceso (Rol)</label>
                 <select id="usrRol" required>
                   <option value="SuperAdmin">Super Administrador (Backend / Total)</option>
-                  <option value="Admin">Administrador (Dueño / Total)</option>
+                  <option value="Admin">Administrador (Dueño / Total + Autorizaciones)</option>
                   <option value="RH">Recursos Humanos (Gestión General)</option>
+                  <option value="GerenteOperativo">Gerente Operativo (Bonos, Incidencias, Préstamos, Vacaciones)</option>
                   <option value="Operativo">Operativo (Solo Préstamos y Recibos)</option>
                 </select>
               </div>
@@ -872,12 +1101,15 @@
         RH: { minimo: 4, modo: "TOTAL", tarifa: 50, deduccion: 100, multiplicador: 1.5 }
       },
       bonos: {},
+      bonosMensuales: {},
       prestamos: {},
       incidencias: {},
+      vacacionesMovs: {},
       diasEmpresa: {},
       nominas: {},
       usuarios: {},
-      preNominaActual: []
+      preNominaActual: [],
+      prestamoPendienteAutorizacion: null
     };
 
     async function fbGet(path) {
@@ -908,23 +1140,31 @@
     }
 
     // =========================================================================
-    // INICIALIZACIÓN DE PARÁMETROS BASE EN FIREBASE
+    // INICIALIZACIÓN SEGURA DE PARÁMETROS BASE EN FIREBASE
     // =========================================================================
     async function inicializarFirebaseBase() {
       const msg = document.getElementById("loginMsg");
-      msg.innerText = "Inicializando estructura en Firebase...";
+      msg.innerText = "Actualizando estructura y roles en Firebase...";
       try {
-        const usuariosIniciales = {
+        const usuariosExistentes = (await fbGet("usuarios_sistema")) || {};
+        const usuariosBase = {
+          ...usuariosExistentes,
           u_super: { nombre: "Soporte Backend", correo: "superadmin@argue.com", pass: "super123", rol: "SuperAdmin" },
           u_admin: { nombre: "Dirección General", correo: "dueno@argue.com", pass: "admin123", rol: "Admin" },
           u_rh: { nombre: "Recursos Humanos", correo: "rh@argue.com", pass: "rh123", rol: "RH" },
+          u_gerente: { nombre: "Gerente Operativo", correo: "gerente@argue.com", pass: "gerente123", rol: "GerenteOperativo" },
           u_op: { nombre: "Auxiliar Operativo", correo: "operativo@argue.com", pass: "op123", rol: "Operativo" }
         };
-        await fbPut("usuarios_sistema", usuariosIniciales);
-        await fbPut("config_bonos", STATE.configBonos);
-        await fbPut("tipos_empleado", STATE.tiposEmpleado);
+        await fbPut("usuarios_sistema", usuariosBase);
+
+        const cfgActual = await fbGet("config_bonos");
+        if (!cfgActual) await fbPut("config_bonos", STATE.configBonos);
+
+        const tiposActual = await fbGet("tipos_empleado");
+        if (!tiposActual) await fbPut("tipos_empleado", STATE.tiposEmpleado);
+
         msg.style.color = "var(--success)";
-        msg.innerText = "¡Base inicializada! Usa dueno@argue.com / admin123 para entrar.";
+        msg.innerText = "¡Base actualizada! Roles listos (dueno@argue.com / admin123, gerente@argue.com / gerente123).";
       } catch (e) {
         msg.innerText = "Error al conectar con Firebase: " + e.message;
       }
@@ -947,7 +1187,7 @@
       const usuariosDB = await fbGet("usuarios_sistema");
 
       if (!usuariosDB) {
-        msg.innerText = "Base de datos vacía. Haz clic en 'Inicializar Base de Datos en Firebase'.";
+        msg.innerText = "Base de datos vacía. Haz clic en 'Inicializar / Actualizar Base en Firebase'.";
         return;
       }
 
@@ -989,12 +1229,9 @@
         }
       });
 
-      if (primerTabPermitido) {
-        cambiarTab(primerTabPermitido);
-      }
+      if (primerTabPermitido) cambiarTab(primerTabPermitido);
     }
 
-    // Navegación
     document.querySelectorAll(".nav-btn").forEach(btn => {
       btn.addEventListener("click", () => cambiarTab(btn.dataset.tab));
     });
@@ -1017,13 +1254,15 @@
     // =========================================================================
     async function cargarTodoDesdeFirebase() {
       document.getElementById("syncLabel").innerText = "Sincronizando...";
-      const [emps, tipos, cfgBonos, bonos, prest, incid, diasEmp, nominas, usrs] = await Promise.all([
+      const [emps, tipos, cfgBonos, bonos, bonosMens, prest, incid, vacMovs, diasEmp, nominas, usrs] = await Promise.all([
         fbGet("empleados"),
         fbGet("tipos_empleado"),
         fbGet("config_bonos"),
         fbGet("historial_bonos"),
+        fbGet("bonos_mensuales"),
         fbGet("prestamos"),
         fbGet("incidencias"),
+        fbGet("vacaciones_movimientos"),
         fbGet("dias_empresa"),
         fbGet("nominas_historicas"),
         fbGet("usuarios_sistema")
@@ -1033,8 +1272,10 @@
       if (tipos && Array.isArray(tipos)) STATE.tiposEmpleado = tipos;
       if (cfgBonos) STATE.configBonos = cfgBonos;
       STATE.bonos = bonos || {};
+      STATE.bonosMensuales = bonosMens || {};
       STATE.prestamos = prest || {};
       STATE.incidencias = incid || {};
+      STATE.vacacionesMovs = vacMovs || {};
       STATE.diasEmpresa = diasEmp || {};
       STATE.nominas = nominas || {};
       STATE.usuarios = usrs || {};
@@ -1048,19 +1289,28 @@
       renderSelectsEmpleados();
       renderTablaEmpleados();
       renderTablaBonos();
+      renderTablaBonoMensual();
       renderTablaPrestamos();
+      renderReportePrestamosFijos();
       renderTablaIncidencias();
+      renderTablaBalanceVacaciones();
       renderConfigBonos();
       renderDiasEmpresa();
       renderUsuariosTabla();
       renderHistorialNominas();
+      renderSelectCortesMensuales();
       actualizarDashboardKPIs();
       ejecutarCalculadora();
     }
 
     // =========================================================================
-    // MÓDULO 1: EMPLEADOS Y VACACIONES LFT MÉXICO
+    // MÓDULO 1: EMPLEADOS, LÍMITES Y BALANCE DE VACACIONES
     // =========================================================================
+    function ajustarDiasPorTipoEmpleado() {
+      const tipo = document.getElementById("empTipo").value.toLowerCase();
+      document.getElementById("empDiasSem").value = tipo.includes("admin") ? 5 : 6;
+    }
+
     function recalcularSalariosAlta() {
       const mensual = parseFloat(document.getElementById("empSueldoMensual").value) || 0;
       const diario = mensual / 30.4;
@@ -1069,13 +1319,14 @@
       document.getElementById("empSueldoSemanal").value = semanal.toFixed(2);
     }
 
-    function calcularVacacionesLFT(fechaIngreso) {
-      if (!fechaIngreso) return { anios: 0, diasLey: 0, diasEmpresa: 0, total: 0 };
-      const ingreso = new Date(fechaIngreso + "T00:00:00");
+    function calcularBalanceVacacionesEmpleado(empKey, emp) {
+      if (!emp || !emp.ingreso) return { anios: 0, diasLey: 0, diasNoOficiales: 0, diasTomados: 0, disponible: 0 };
+      const ingreso = new Date(emp.ingreso + "T00:00:00");
       const hoy = new Date();
       let anios = hoy.getFullYear() - ingreso.getFullYear();
       const m = hoy.getMonth() - ingreso.getMonth();
       if (m < 0 || (m === 0 && hoy.getDate() < ingreso.getDate())) anios--;
+      anios = Math.max(0, anios);
 
       let diasLey = 0;
       if (anios === 1) diasLey = 12;
@@ -1090,8 +1341,18 @@
       else if (anios >= 26) diasLey = 30;
 
       const anioActual = hoy.getFullYear();
-      const diasEmpresa = Object.values(STATE.diasEmpresa).filter(d => Number(d.anio) === anioActual).length;
-      return { anios: Math.max(0, anios), diasLey, diasEmpresa, total: diasLey + diasEmpresa };
+      // Días no oficiales otorgados por la empresa en el año (se descuentan del balance)
+      const diasNoOficiales = Object.values(STATE.diasEmpresa).filter(d => Number(d.anio) === anioActual).length;
+
+      // Días tomados o pagados en el módulo de vacaciones + saldo inicial capturado en alta
+      const movsAnio = Object.values(STATE.vacacionesMovs)
+        .filter(v => v.empKey === empKey && Number(v.anio) === anioActual && v.tipo !== "Revision Anual")
+        .reduce((acc, v) => acc + Number(v.dias || 0), 0);
+
+      const diasTomados = Number(emp.vacTomadas || 0) + movsAnio;
+      const disponible = diasLey - diasNoOficiales - diasTomados;
+
+      return { anios, diasLey, diasNoOficiales, diasTomados, disponible };
     }
 
     function renderSelectTiposEmpleado() {
@@ -1107,6 +1368,7 @@
         await fbPut("tipos_empleado", STATE.tiposEmpleado);
         renderSelectTiposEmpleado();
         document.getElementById("empTipo").value = nuevo;
+        ajustarDiasPorTipoEmpleado();
       }
       document.getElementById("nuevoTipoEmpInput").value = "";
     }
@@ -1138,6 +1400,10 @@
         sueldoMensual: mensual,
         salarioDiario: Number(diario.toFixed(4)),
         sueldoSemanal: Number(semanal.toFixed(2)),
+        limiteSemanal: parseFloat(document.getElementById("empLimiteSemanal").value) || 0,
+        limiteFijo: parseFloat(document.getElementById("empLimiteFijo").value) || 0,
+        bonoMensual: parseFloat(document.getElementById("empBonoMensual").value) || 0,
+        vacTomadas: parseInt(document.getElementById("empVacTomadas").value) || 0,
         isrFijo: parseFloat(document.getElementById("empIsr").value) || 0,
         imssFijo: parseFloat(document.getElementById("empImss").value) || 0,
         infonavitFijo: parseFloat(document.getElementById("empInfonavit").value) || 0
@@ -1170,6 +1436,10 @@
       document.getElementById("empJornada").value = emp.jornada;
       document.getElementById("empDiasSem").value = emp.diasSem;
       document.getElementById("empSueldoMensual").value = emp.sueldoMensual;
+      document.getElementById("empLimiteSemanal").value = emp.limiteSemanal ?? 1500;
+      document.getElementById("empLimiteFijo").value = emp.limiteFijo ?? 5000;
+      document.getElementById("empBonoMensual").value = emp.bonoMensual ?? 0;
+      document.getElementById("empVacTomadas").value = emp.vacTomadas ?? 0;
       document.getElementById("empIsr").value = emp.isrFijo || 0;
       document.getElementById("empImss").value = emp.imssFijo || 0;
       document.getElementById("empInfonavit").value = emp.infonavitFijo || 0;
@@ -1192,16 +1462,16 @@
       );
 
       tbody.innerHTML = entries.map(([key, e]) => {
-        const vac = calcularVacacionesLFT(e.ingreso);
+        const vac = calcularBalanceVacacionesEmpleado(key, e);
         const badgeCls = e.estado === "Alta" ? "badge-alta" : (e.estado === "Baja" ? "badge-baja" : "badge-warn");
         return `
           <tr>
             <td><strong>${e.numero}</strong></td>
             <td>${e.nombre}<br><small style="color:var(--text-muted)">RFC: ${e.rfc}</small></td>
-            <td>${e.puesto}<br><small style="color:var(--primary)">${e.tipo}</small></td>
-            <td><span class="badge badge-info">${e.esquemaBono}</span></td>
-            <td>${vac.anios} año(s) • <strong>${vac.total} días</strong><br><small style="color:var(--text-muted)">(${vac.diasLey} LFT + ${vac.diasEmpresa} Emp.)</small></td>
-            <td>$${Number(e.sueldoMensual).toLocaleString("es-MX", {minimumFractionDigits:2})}</td>
+            <td>${e.puesto}<br><small style="color:var(--primary)">${e.tipo} (${e.diasSem}d)</small></td>
+            <td>Sem: <strong>$${Number(e.limiteSemanal||0).toLocaleString()}</strong><br>Fijo: <strong>$${Number(e.limiteFijo||0).toLocaleString()}</strong></td>
+            <td style="color:var(--success);">$${Number(e.bonoMensual||0).toLocaleString("es-MX", {minimumFractionDigits:2})}</td>
+            <td><strong>${vac.disponible} días disp.</strong><br><small style="color:var(--text-muted)">(${vac.diasLey} LFT - ${vac.diasNoOficiales} Emp - ${vac.diasTomados} Tom)</small></td>
             <td><strong>$${Number(e.sueldoSemanal).toLocaleString("es-MX", {minimumFractionDigits:2})}</strong></td>
             <td><span class="badge ${badgeCls}">${e.estado}</span></td>
             <td><button class="btn btn-outline btn-sm" onclick="editarEmpleado('${key}')">Editar</button></td>
@@ -1215,27 +1485,30 @@
       const opts = `<option value="">-- Seleccionar Empleado --</option>` +
         activos.map(([k, e]) => `<option value="${k}">#${e.numero} - ${e.nombre}</option>`).join("");
 
-      ["bonoEmpSelect", "prestamoEmpSelect", "incEmpSelect"].forEach(id => {
+      ["bonoEmpSelect", "prestamoEmpSelect", "incEmpSelect", "vacEmpSelect"].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.innerHTML = opts;
       });
     }
 
     // =========================================================================
-    // MÓDULO 2: CÁLCULO EXACTO DE BONOS SEMANALES
+    // MÓDULO 2: BONOS SEMANALES Y BONO MENSUAL FIJO
     // =========================================================================
+    function cambiarSubtabBonos(sub, btn) {
+      document.getElementById("subtab-bono-semanal").style.display = sub === "semanal" ? "block" : "none";
+      document.getElementById("subtab-bono-mensual").style.display = sub === "mensual" ? "block" : "none";
+      btn.parentElement.querySelectorAll(".subtab-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
+
     function calcularMontoBono(esquemaKey, viajes) {
       const v = Number(viajes) || 0;
       const regla = STATE.configBonos[esquemaKey];
-      if (!regla || esquemaKey === "NINGUNO") return 0;
-
-      if (v <= Number(regla.minimo)) return 0;
+      if (!regla || esquemaKey === "NINGUNO" || v <= Number(regla.minimo)) return 0;
 
       if (regla.modo === "EXCEDENTE") {
-        // Choferes: (viajes - 5) * 120
         return ((v - Number(regla.minimo)) * Number(regla.tarifa) - Number(regla.deduccion)) * Number(regla.multiplicador);
       } else {
-        // Gerente, Admin, RH: (viajes * 50 - 100) * multiplicador
         return ((v * Number(regla.tarifa)) - Number(regla.deduccion)) * Number(regla.multiplicador);
       }
     }
@@ -1278,7 +1551,7 @@
       document.getElementById("bonoViajes").value = "";
       actualizarPreviewBono();
       await cargarTodoDesdeFirebase();
-      alert(`Bono registrado por $${monto.toFixed(2)} MXN`);
+      alert(`Bono semanal registrado por $${monto.toFixed(2)} MXN`);
     }
 
     function renderTablaBonos() {
@@ -1297,19 +1570,92 @@
       `).join("");
     }
 
+    function renderTablaBonoMensual() {
+      const tbody = document.getElementById("tablaBonoMensualBody");
+      const activos = Object.entries(STATE.empleados).filter(([k, e]) => e.estado === "Alta");
+      const puedeEditar = ["SuperAdmin", "Admin"].includes(STATE.currentUser?.rol);
+
+      tbody.innerHTML = activos.map(([k, e]) => `
+        <tr>
+          <td>${e.numero}</td>
+          <td><strong>${e.nombre}</strong></td>
+          <td>${e.puesto}</td>
+          <td>$${Number(e.bonoMensual || 0).toFixed(2)}</td>
+          <td>
+            <input type="number" step="0.01" class="editable-cell" id="bm_val_${k}" value="${Number(e.bonoMensual || 0)}" ${puedeEditar ? "" : "readonly"}>
+          </td>
+        </tr>
+      `).join("");
+    }
+
+    async function guardarCorteBonoMensual() {
+      const periodo = document.getElementById("bonoMensualPeriodo").value;
+      if (!periodo) { alert("Selecciona el mes y año del corte."); return; }
+
+      const activos = Object.entries(STATE.empleados).filter(([k, e]) => e.estado === "Alta");
+      const detalle = activos.map(([k, e]) => ({
+        empKey: k,
+        numero: e.numero,
+        nombre: e.nombre,
+        puesto: e.puesto,
+        rfc: e.rfc,
+        curp: e.curp,
+        nss: e.nss,
+        montoBonoMensual: parseFloat(document.getElementById(`bm_val_${k}`).value) || 0
+      }));
+
+      await fbPut(`bonos_mensuales/${periodo}`, {
+        periodo,
+        fechaEmision: new Date().toLocaleDateString("es-MX"),
+        detalle
+      });
+
+      await cargarTodoDesdeFirebase();
+      alert(`Corte de Bono Mensual (${periodo}) guardado. Ya puedes imprimir sus recibos en la pestaña de Recibos.`);
+    }
+
     // =========================================================================
-    // MÓDULO 3: PRÉSTAMOS (ADELANTO SEMANAL Y CONVENCIONAL)
+    // MÓDULO 3: PRÉSTAMOS SEMANALES Y FIJOS (VALIDACIÓN DE LÍMITES + RECIBOS)
     // =========================================================================
+    function cambiarSubtabPrestamos(sub, btn) {
+      document.getElementById("subtab-prest-registro").style.display = sub === "registro" ? "block" : "none";
+      document.getElementById("subtab-prest-reporteFijos").style.display = sub === "reporteFijos" ? "block" : "none";
+      document.getElementById("subtab-prest-reciboPrestamo").style.display = sub === "reciboPrestamo" ? "block" : "none";
+      btn.parentElement.querySelectorAll(".subtab-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
+
+    function obtenerSaldoInsolutoPorTipo(empKey, tipo) {
+      return Object.values(STATE.prestamos)
+        .filter(p => p.empKey === empKey && p.tipo === tipo && p.estatus === "Activo")
+        .reduce((acc, p) => acc + Number(p.saldoPendiente || 0), 0);
+    }
+
+    function mostrarInfoLimitesPrestamo() {
+      const empKey = document.getElementById("prestamoEmpSelect").value;
+      const tipo = document.getElementById("prestamoTipo").value;
+      if (!empKey || !STATE.empleados[empKey]) {
+        document.getElementById("prestamoLimiteInfo").value = "";
+        return;
+      }
+      const emp = STATE.empleados[empKey];
+      const limite = tipo === "Préstamo Semanal" ? Number(emp.limiteSemanal || 0) : Number(emp.limiteFijo || 0);
+      const saldoActual = obtenerSaldoInsolutoPorTipo(empKey, tipo);
+      const disponible = Math.max(0, limite - saldoActual);
+      document.getElementById("prestamoLimiteInfo").value = `Límite: $${limite} | Saldo: $${saldoActual} | Disp: $${disponible}`;
+    }
+
     function ajustarCamposPrestamo() {
       const tipo = document.getElementById("prestamoTipo").value;
       const semInput = document.getElementById("prestamoSemanas");
-      if (tipo === "Adelanto Semanal") {
+      if (tipo === "Préstamo Semanal") {
         semInput.value = 1;
         semInput.readOnly = true;
       } else {
         semInput.readOnly = false;
       }
       calcularDescuentoPrestamo();
+      mostrarInfoLimitesPrestamo();
     }
 
     function calcularDescuentoPrestamo() {
@@ -1318,29 +1664,160 @@
       document.getElementById("prestamoDescuentoSem").value = (total / semanas).toFixed(2);
     }
 
-    async function registrarPrestamo(e) {
+    async function intentarRegistrarPrestamo(e) {
       e.preventDefault();
       const empKey = document.getElementById("prestamoEmpSelect").value;
       const emp = STATE.empleados[empKey];
+      const tipo = document.getElementById("prestamoTipo").value;
       const total = parseFloat(document.getElementById("prestamoTotal").value);
       const descuentoSem = parseFloat(document.getElementById("prestamoDescuentoSem").value);
+      const semanas = parseInt(document.getElementById("prestamoSemanas").value);
+      const fecha = document.getElementById("prestamoFecha").value;
 
-      await fbPost("prestamos", {
+      const limite = tipo === "Préstamo Semanal" ? Number(emp.limiteSemanal || 0) : Number(emp.limiteFijo || 0);
+      const saldoInsoluto = obtenerSaldoInsolutoPorTipo(empKey, tipo);
+      const nuevoAcumulado = saldoInsoluto + total;
+
+      const payload = {
         empKey,
         numeroEmpleado: emp.numero,
         nombreEmpleado: emp.nombre,
-        tipo: document.getElementById("prestamoTipo").value,
+        puesto: emp.puesto,
+        rfc: emp.rfc,
+        tipo,
         montoTotal: total,
-        semanas: parseInt(document.getElementById("prestamoSemanas").value),
+        semanas,
         descuentoSemanal: descuentoSem,
         saldoPendiente: total,
-        fecha: document.getElementById("prestamoFecha").value,
-        estatus: "Activo"
-      });
+        fecha,
+        estatus: "Activo",
+        autorizadoExcepcion: false
+      };
 
-      e.target.reset();
+      // Validar contra saldo insoluto acumulado
+      if (nuevoAcumulado > limite) {
+        STATE.prestamoPendienteAutorizacion = payload;
+        document.getElementById("authAdminDetalle").innerText =
+          `El empleado ${emp.nombre} tiene un límite de $${limite.toFixed(2)} para ${tipo}. Con su saldo actual ($${saldoInsoluto.toFixed(2)}) + esta solicitud ($${total.toFixed(2)}), alcanza $${nuevoAcumulado.toFixed(2)}.`;
+        document.getElementById("authAdminPass").value = "";
+        document.getElementById("modalAuthAdmin").style.display = "flex";
+        return;
+      }
+
+      await finalizarGuardadoPrestamo(payload);
+    }
+
+    function cancelarAutorizacionPrestamo() {
+      STATE.prestamoPendienteAutorizacion = null;
+      document.getElementById("modalAuthAdmin").style.display = "none";
+      alert("Operación cancelada.");
+    }
+
+    async function confirmarAutorizacionPrestamo() {
+      const pass = document.getElementById("authAdminPass").value.trim();
+      const adminValido = Object.values(STATE.usuarios).find(
+        u => (u.rol === "Admin" || u.rol === "SuperAdmin") && u.pass === pass
+      );
+
+      if (!adminValido) {
+        alert("Contraseña de Administrador incorrecta. Solo el Administrador puede autorizar excedentes.");
+        return;
+      }
+
+      const payload = STATE.prestamoPendienteAutorizacion;
+      payload.autorizadoExcepcion = true;
+      payload.autorizadoPor = adminValido.nombre;
+      document.getElementById("modalAuthAdmin").style.display = "none";
+      STATE.prestamoPendienteAutorizacion = null;
+      await finalizarGuardadoPrestamo(payload);
+    }
+
+    async function finalizarGuardadoPrestamo(payload) {
+      await fbPost("prestamos", payload);
+      document.getElementById("prestamoTotal").value = "";
+      document.getElementById("prestamoDescuentoSem").value = "";
       await cargarTodoDesdeFirebase();
-      alert("Préstamo registrado exitosamente.");
+
+      // Abrir automáticamente recibo imprimible
+      generarVistaReciboPrestamo(payload);
+      const btnRec = document.querySelectorAll("#tab-prestamos .subtab-btn")[2];
+      cambiarSubtabPrestamos("reciboPrestamo", btnRec);
+    }
+
+    function generarVistaReciboPrestamo(p) {
+      const historialEmp = Object.values(STATE.prestamos).filter(x => x.empKey === p.empKey && x.estatus === "Activo");
+      const acumuladoTotal = historialEmp.reduce((a, x) => a + Number(x.saldoPendiente), 0);
+
+      const filasHistorial = historialEmp.map(h => `
+        <tr>
+          <td>${h.fecha}</td>
+          <td>${h.tipo}</td>
+          <td style="text-align:right;">$${Number(h.montoTotal).toFixed(2)}</td>
+          <td style="text-align:right;">$${Number(h.descuentoSemanal).toFixed(2)}</td>
+          <td style="text-align:right;">$${Number(h.saldoPendiente).toFixed(2)}</td>
+        </tr>
+      `).join("");
+
+      document.getElementById("reciboPrestamoPaper").innerHTML = `
+        <div class="recibo-header">
+          <div>
+            <h2 style="margin:0; font-size:1.2rem;">ARGUE MATERIALES S.A. DE C.V.</h2>
+            <p style="font-size:0.8rem; color:#475569; margin-top:4px;">PAGARÉ Y COMPROBANTE DE ${p.tipo.toUpperCase()}</p>
+          </div>
+          <div style="text-align:right; font-size:0.82rem;">
+            <strong>Fecha:</strong> ${p.fecha}<br>
+            <strong>Plazo:</strong> ${p.semanas} semana(s)
+          </div>
+        </div>
+
+        <div class="recibo-grid">
+          <div>
+            <strong>No. Empleado:</strong> ${p.numeroEmpleado}<br>
+            <strong>Nombre:</strong> ${p.nombreEmpleado}
+          </div>
+          <div>
+            <strong>Monto Otorgado Hoy:</strong> $${Number(p.montoTotal).toFixed(2)} MXN<br>
+            <strong>Descuento Semanal Pactado:</strong> $${Number(p.descuentoSemanal).toFixed(2)} MXN
+          </div>
+        </div>
+
+        <h4 style="margin-bottom:8px; font-size:0.88rem;">Resumen de Préstamos Activos y Acumulado Semanal:</h4>
+        <table class="recibo-table">
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Concepto</th>
+              <th style="text-align:right;">Monto Original</th>
+              <th style="text-align:right;">Desc. Semanal</th>
+              <th style="text-align:right;">Saldo Pendiente</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filasHistorial}
+            <tr style="background:#f1f5f9; font-weight:700;">
+              <td colspan="4">SALDO ACUMULADO TOTAL PENDIENTE POR LIQUIDAR</td>
+              <td style="text-align:right;">$${acumuladoTotal.toFixed(2)}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p style="font-size:0.76rem; color:#475569; margin-top:12px;">
+          Autorizo expresamente a <strong>ARGUE MATERIALES S.A. DE C.V.</strong> a descontar vía nómina semanal la cantidad de <strong>$${Number(p.descuentoSemanal).toFixed(2)} MXN</strong> durante ${p.semanas} semana(s) hasta cubrir el saldo total recibido. ${p.autorizadoExcepcion ? `(Excepción de límite autorizada por: ${p.autorizadoPor})` : ""}
+        </p>
+
+        <div class="recibo-footer">
+          <div class="firma-line">Firma del Empleado Solicitante</div>
+          <div class="firma-line">Autorización Administración / Caja</div>
+        </div>
+      `;
+    }
+
+    function verReciboPrestamoPorKey(key) {
+      const p = STATE.prestamos[key];
+      if (!p) return;
+      generarVistaReciboPrestamo(p);
+      const btnRec = document.querySelectorAll("#tab-prestamos .subtab-btn")[2];
+      cambiarSubtabPrestamos("reciboPrestamo", btnRec);
     }
 
     function renderTablaPrestamos() {
@@ -1350,6 +1827,7 @@
         const badgeCls = p.estatus === "Activo" ? "badge-warn" : "badge-alta";
         return `
           <tr>
+            <td>${p.fecha}</td>
             <td>${p.numeroEmpleado}</td>
             <td>${p.nombreEmpleado}</td>
             <td>${p.tipo}</td>
@@ -1357,17 +1835,101 @@
             <td><strong>$${Number(p.descuentoSemanal).toFixed(2)}</strong></td>
             <td>$${Number(p.saldoPendiente).toFixed(2)}</td>
             <td><span class="badge ${badgeCls}">${p.estatus}</span></td>
-            <td><button class="btn btn-danger btn-sm" onclick="eliminarRegistro('prestamos','${key}')">X</button></td>
+            <td>
+              <button class="btn btn-outline btn-sm" onclick="verReciboPrestamoPorKey('${key}')">🖨️ Recibo</button>
+              <button class="btn btn-danger btn-sm" onclick="eliminarRegistro('prestamos','${key}')">X</button>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderReportePrestamosFijos() {
+      const tbody = document.getElementById("tablaReportePrestamosFijosBody");
+      const fijos = Object.values(STATE.prestamos).filter(p => p.tipo === "Préstamo Fijo");
+      const porEmpleado = {};
+
+      fijos.forEach(p => {
+        if (!porEmpleado[p.empKey]) {
+          porEmpleado[p.empKey] = {
+            numero: p.numeroEmpleado,
+            nombre: p.nombreEmpleado,
+            limite: Number(STATE.empleados[p.empKey]?.limiteFijo || 0),
+            otorgadoHistorico: 0,
+            activosNuevos: 0,
+            saldoActual: 0
+          };
+        }
+        porEmpleado[p.empKey].otorgadoHistorico += Number(p.montoTotal);
+        if (p.estatus === "Activo") {
+          porEmpleado[p.empKey].activosNuevos += Number(p.montoTotal);
+          porEmpleado[p.empKey].saldoActual += Number(p.saldoPendiente);
+        }
+      });
+
+      tbody.innerHTML = Object.values(porEmpleado).map(r => {
+        const abonado = r.otorgadoHistorico - r.saldoActual;
+        const disponible = Math.max(0, r.limite - r.saldoActual);
+        return `
+          <tr>
+            <td>${r.numero}</td>
+            <td><strong>${r.nombre}</strong></td>
+            <td>$${r.limite.toFixed(2)}</td>
+            <td>$${r.otorgadoHistorico.toFixed(2)}</td>
+            <td>$${r.activosNuevos.toFixed(2)}</td>
+            <td style="color:var(--success);">$${abonado.toFixed(2)}</td>
+            <td style="color:var(--warning); font-weight:700;">$${r.saldoActual.toFixed(2)}</td>
+            <td>$${disponible.toFixed(2)}</td>
           </tr>
         `;
       }).join("");
     }
 
     // =========================================================================
-    // MÓDULO 4: INCIDENCIAS, VACACIONES Y CHECADOR
+    // MÓDULO 4: INCIDENCIAS Y HORAS EXTRAS (LFT 48 HRS / 5 Y 6 DÍAS)
     // =========================================================================
+    function calcularPagoHorasExtrasLFT(emp, horas) {
+      const h = Number(horas) || 0;
+      if (!emp || h <= 0) return 0;
+      // 48 hrs semanales / 5 días (Admin) = 9.6 hrs/día; / 6 días (Choferes y resto) = 8 hrs/día
+      const diasLaborables = Number(emp.diasSem) === 5 ? 5 : 6;
+      const horasPorDia = 48 / diasLaborables;
+      const valorHoraNormal = Number(emp.salarioDiario) / horasPorDia;
+
+      const horasDobles = Math.min(9, h);
+      const horasTriples = Math.max(0, h - 9);
+      const pago = (horasDobles * valorHoraNormal * 2) + (horasTriples * valorHoraNormal * 3);
+      return Number(pago.toFixed(2));
+    }
+
+    function actualizarPreviewIncidencia() {
+      const empKey = document.getElementById("incEmpSelect").value;
+      const tipo = document.getElementById("incTipo").value;
+      const cant = Number(document.getElementById("incDias").value) || 0;
+      const lbl = document.getElementById("lblIncCantidad");
+
+      lbl.innerText = tipo === "Horas Extras" ? "Cantidad de Horas Extras *" : "Cantidad de Días / Eventos *";
+
+      if (!empKey || !STATE.empleados[empKey]) {
+        document.getElementById("incPreviewMonto").value = "$0.00";
+        return;
+      }
+
+      const emp = STATE.empleados[empKey];
+      if (tipo === "Horas Extras") {
+        const pagoHE = calcularPagoHorasExtrasLFT(emp, cant);
+        document.getElementById("incPreviewMonto").value = `+$${pagoHE.toFixed(2)} (Percepción LFT)`;
+      } else if (tipo === "Falta Injustificada" || tipo === "Incapacidad" || tipo === "Dia Sin Goce") {
+        const desc = Number((emp.salarioDiario * cant).toFixed(2));
+        document.getElementById("incPreviewMonto").value = `-$${desc.toFixed(2)} (Deducción)`;
+      } else {
+        document.getElementById("incPreviewMonto").value = "$0.00 (Informativo)";
+      }
+    }
+
     function abrirModalSinChecada() {
       document.getElementById("incTipo").value = "Sin Registro Checador";
+      actualizarPreviewIncidencia();
       document.getElementById("incMotivo").focus();
       alert("Selecciona el empleado, la semana y escribe la causa por la cual no existe registro en el checador.");
     }
@@ -1377,15 +1939,15 @@
       const empKey = document.getElementById("incEmpSelect").value;
       const emp = STATE.empleados[empKey];
       const tipo = document.getElementById("incTipo").value;
-      const dias = Number(document.getElementById("incDias").value);
+      const cantidad = Number(document.getElementById("incDias").value);
 
       let descuento = 0;
-      let primaVac = 0;
+      let pagoHorasExtras = 0;
 
-      if (tipo === "Falta Injustificada" || tipo === "Incapacidad" || tipo === "Dia Sin Goce") {
-        descuento = Number((emp.salarioDiario * dias).toFixed(2));
-      } else if (tipo === "Vacaciones") {
-        primaVac = Number((emp.salarioDiario * dias * 0.25).toFixed(2));
+      if (tipo === "Horas Extras") {
+        pagoHorasExtras = calcularPagoHorasExtrasLFT(emp, cantidad);
+      } else if (tipo === "Falta Injustificada" || tipo === "Incapacidad" || tipo === "Dia Sin Goce") {
+        descuento = Number((emp.salarioDiario * cantidad).toFixed(2));
       }
 
       await fbPost("incidencias", {
@@ -1395,15 +1957,15 @@
         anio: Number(document.getElementById("incAnio").value),
         semana: Number(document.getElementById("incSemana").value),
         tipo,
-        dias,
+        dias: cantidad,
         descuentoCalculado: descuento,
-        primaVacacional: primaVac,
+        pagoHorasExtras,
         motivo: document.getElementById("incMotivo").value.trim()
       });
 
       e.target.reset();
       await cargarTodoDesdeFirebase();
-      alert("Incidencia registrada.");
+      alert("Incidencia / Tiempo extra registrado.");
     }
 
     function renderTablaIncidencias() {
@@ -1412,7 +1974,7 @@
       tbody.innerHTML = list.map(([key, inc]) => {
         let impacto = "Informativo ($0.00)";
         if (inc.descuentoCalculado > 0) impacto = `<span style="color:var(--danger)">-$${Number(inc.descuentoCalculado).toFixed(2)}</span>`;
-        if (inc.primaVacacional > 0) impacto = `<span style="color:var(--success)">+$${Number(inc.primaVacacional).toFixed(2)} Prima</span>`;
+        if (inc.pagoHorasExtras > 0) impacto = `<span style="color:var(--success)">+$${Number(inc.pagoHorasExtras).toFixed(2)} Tiempo Extra</span>`;
 
         return `
           <tr>
@@ -1430,7 +1992,165 @@
     }
 
     // =========================================================================
-    // MÓDULO 5: CÁLCULO INTEGRAL Y EDICIÓN DE NÓMINA FINAL
+    // MÓDULO 5: CONTROL DE VACACIONES Y RECIBOS ESPECÍFICOS
+    // =========================================================================
+    function actualizarBalanceVacacionesPreview() {
+      const empKey = document.getElementById("vacEmpSelect").value;
+      if (!empKey || !STATE.empleados[empKey]) {
+        document.getElementById("vacBalancePreview").value = "";
+        return;
+      }
+      const bal = calcularBalanceVacacionesEmpleado(empKey, STATE.empleados[empKey]);
+      document.getElementById("vacBalancePreview").value = `${bal.disponible} días disponibles (${bal.diasLey} LFT - ${bal.diasNoOficiales} Empresa - ${bal.diasTomados} Tomados)`;
+    }
+
+    async function registrarMovimientoVacaciones(e) {
+      e.preventDefault();
+      const empKey = document.getElementById("vacEmpSelect").value;
+      const emp = STATE.empleados[empKey];
+      const tipo = document.getElementById("vacTipoMovimiento").value;
+      const anio = Number(document.getElementById("vacAnio").value);
+      const semana = Number(document.getElementById("vacSemana").value);
+      const dias = Number(document.getElementById("vacDiasSolicitados").value);
+      const obs = document.getElementById("vacObservaciones").value.trim();
+
+      const pagoVacaciones = tipo === "Pago de Vacaciones" ? Number((emp.salarioDiario * dias).toFixed(2)) : 0;
+      const primaVacacional = (tipo === "Goce de Vacaciones" || tipo === "Pago de Vacaciones")
+        ? Number((emp.salarioDiario * dias * 0.25).toFixed(2))
+        : 0;
+
+      const mov = {
+        empKey,
+        numeroEmpleado: emp.numero,
+        nombreEmpleado: emp.nombre,
+        puesto: emp.puesto,
+        ingreso: emp.ingreso,
+        salarioDiario: emp.salarioDiario,
+        tipo,
+        anio,
+        semana,
+        dias,
+        pagoVacaciones,
+        primaVacacional,
+        obs,
+        fecha: new Date().toLocaleDateString("es-MX")
+      };
+
+      await fbPost("vacaciones_movimientos", mov);
+      await cargarTodoDesdeFirebase();
+      generarReciboVacaciones(empKey, mov);
+      alert("Movimiento vacacional registrado y recibo generado.");
+    }
+
+    function generarReciboVacaciones(empKey, movOpcional = null) {
+      const emp = STATE.empleados[empKey];
+      if (!emp) return;
+      const bal = calcularBalanceVacacionesEmpleado(empKey, emp);
+      const m = movOpcional || {
+        tipo: "Revisión Anual de Balance",
+        anio: new Date().getFullYear(),
+        dias: 0,
+        pagoVacaciones: 0,
+        primaVacacional: 0,
+        obs: "Estado de cuenta anual de vacaciones",
+        fecha: new Date().toLocaleDateString("es-MX")
+      };
+
+      const totalPagar = Number(m.pagoVacaciones || 0) + Number(m.primaVacacional || 0);
+
+      document.getElementById("reciboVacacionesPaper").innerHTML = `
+        <div class="recibo-header">
+          <div>
+            <h2 style="margin:0; font-size:1.2rem;">ARGUE MATERIALES S.A. DE C.V.</h2>
+            <p style="font-size:0.8rem; color:#475569; margin-top:4px;">COMPROBANTE OFICIAL DE CONTROL VACACIONAL (${m.tipo.toUpperCase()})</p>
+          </div>
+          <div style="text-align:right; font-size:0.82rem;">
+            <strong>Ejercicio:</strong> ${m.anio}<br>
+            <strong>Fecha Emisión:</strong> ${m.fecha}
+          </div>
+        </div>
+
+        <div class="recibo-grid">
+          <div>
+            <strong>No. Empleado:</strong> ${emp.numero}<br>
+            <strong>Nombre:</strong> ${emp.nombre}<br>
+            <strong>Puesto:</strong> ${emp.puesto}
+          </div>
+          <div>
+            <strong>Fecha Ingreso:</strong> ${emp.ingreso}<br>
+            <strong>Antigüedad:</strong> ${bal.anios} año(s)<br>
+            <strong>Salario Diario:</strong> $${Number(emp.salarioDiario).toFixed(2)} MXN
+          </div>
+        </div>
+
+        <table class="recibo-table">
+          <thead>
+            <tr>
+              <th>CONCEPTO DE BALANCE VACACIONAL</th>
+              <th style="text-align:right;">DÍAS / IMPORTE</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Días Correspondientes por Ley (LFT México)</td>
+              <td style="text-align:right;">${bal.diasLey} días</td>
+            </tr>
+            <tr>
+              <td>(-) Días No Oficiales Otorgados por la Empresa en el Año</td>
+              <td style="text-align:right;">-${bal.diasNoOficiales} días</td>
+            </tr>
+            <tr>
+              <td>(-) Días Disfrutados / Liquidados Acumulados</td>
+              <td style="text-align:right;">-${bal.diasTomados} días</td>
+            </tr>
+            <tr style="background:#f1f5f9; font-weight:700;">
+              <td>SALDO DE VACACIONES DISPONIBLES ACTUAL</td>
+              <td style="text-align:right;">${bal.disponible} días</td>
+            </tr>
+            ${m.dias > 0 ? `
+            <tr>
+              <td>Días en el Presente Trámite (${m.tipo})</td>
+              <td style="text-align:right;">${m.dias} días</td>
+            </tr>
+            <tr>
+              <td>Importe Vacaciones + Prima Vacacional (25%)</td>
+              <td style="text-align:right;"><strong>$${totalPagar.toFixed(2)} MXN</strong></td>
+            </tr>` : ""}
+          </tbody>
+        </table>
+
+        <p style="font-size:0.78rem; color:#475569;"><strong>Observaciones:</strong> ${m.obs}</p>
+
+        <div class="recibo-footer">
+          <div class="firma-line">Firma del Trabajador</div>
+          <div class="firma-line">Autorización Recursos Humanos</div>
+        </div>
+      `;
+    }
+
+    function renderTablaBalanceVacaciones() {
+      const tbody = document.getElementById("tablaBalanceVacacionesBody");
+      const activos = Object.entries(STATE.empleados).filter(([k, e]) => e.estado !== "Baja");
+
+      tbody.innerHTML = activos.map(([k, e]) => {
+        const bal = calcularBalanceVacacionesEmpleado(k, e);
+        return `
+          <tr>
+            <td>${e.numero}</td>
+            <td><strong>${e.nombre}</strong></td>
+            <td>${bal.anios} año(s)</td>
+            <td>${bal.diasLey} días</td>
+            <td style="color:var(--warning);">-${bal.diasNoOficiales} días</td>
+            <td>${bal.diasTomados} días</td>
+            <td style="color:var(--success); font-weight:700;">${bal.disponible} días</td>
+            <td><button class="btn btn-outline btn-sm" onclick="generarReciboVacaciones('${k}')">🖨️ Imprimir Estado</button></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    // =========================================================================
+    // MÓDULO 6: CÁLCULO INTEGRAL Y CIERRE DE NÓMINA SEMANAL
     // =========================================================================
     function generarPreNomina() {
       const anio = Number(document.getElementById("nomAnio").value);
@@ -1438,18 +2158,19 @@
       const activos = Object.entries(STATE.empleados).filter(([k, e]) => e.estado === "Alta" || e.estado === "Incapacidad");
 
       STATE.preNominaActual = activos.map(([empKey, emp]) => {
-        // 1. Sumar bonos de esa semana
         const bonoSem = Object.values(STATE.bonos)
           .filter(b => b.empKey === empKey && Number(b.anio) === anio && Number(b.semana) === semana)
           .reduce((acc, b) => acc + Number(b.montoCalculado), 0);
 
-        // 2. Incidencias de esa semana
         const incs = Object.values(STATE.incidencias)
           .filter(i => i.empKey === empKey && Number(i.anio) === anio && Number(i.semana) === semana);
         const descIncid = incs.reduce((acc, i) => acc + Number(i.descuentoCalculado || 0), 0);
-        const primaVac = incs.reduce((acc, i) => acc + Number(i.primaVacacional || 0), 0);
+        const horasExtras = incs.reduce((acc, i) => acc + Number(i.pagoHorasExtras || 0), 0);
 
-        // 3. Préstamos activos
+        const vacs = Object.values(STATE.vacacionesMovs)
+          .filter(v => v.empKey === empKey && Number(v.anio) === anio && Number(v.semana) === semana);
+        const primaVac = vacs.reduce((acc, v) => acc + Number(v.pagoVacaciones || 0) + Number(v.primaVacacional || 0), 0);
+
         const prestamosActivos = Object.entries(STATE.prestamos)
           .filter(([pk, p]) => p.empKey === empKey && p.estatus === "Activo" && Number(p.saldoPendiente) > 0);
         const descPrestamo = prestamosActivos.reduce((acc, [pk, p]) => {
@@ -1460,7 +2181,7 @@
         const isr = Number(emp.isrFijo || 0);
         const imss = Number(emp.imssFijo || 0);
         const infonavit = Number(emp.infonavitFijo || 0);
-        const neto = baseSem + bonoSem + primaVac - descIncid - isr - imss - infonavit - descPrestamo;
+        const neto = baseSem + bonoSem + horasExtras + primaVac - descIncid - isr - imss - infonavit - descPrestamo;
 
         return {
           empKey,
@@ -1473,6 +2194,7 @@
           salarioDiario: emp.salarioDiario,
           baseSem,
           bonoSem,
+          horasExtras,
           primaVac,
           descIncid,
           isr,
@@ -1494,13 +2216,14 @@
           <td><strong>${row.nombre}</strong></td>
           <td><input type="number" step="0.01" class="editable-cell" value="${row.baseSem}" onchange="editarCeldaNomina(${idx}, 'baseSem', this.value)"></td>
           <td><input type="number" step="0.01" class="editable-cell" value="${row.bonoSem}" onchange="editarCeldaNomina(${idx}, 'bonoSem', this.value)"></td>
+          <td><input type="number" step="0.01" class="editable-cell" value="${row.horasExtras}" onchange="editarCeldaNomina(${idx}, 'horasExtras', this.value)"></td>
           <td><input type="number" step="0.01" class="editable-cell" value="${row.primaVac}" onchange="editarCeldaNomina(${idx}, 'primaVac', this.value)"></td>
           <td><input type="number" step="0.01" class="editable-cell" value="${row.descIncid}" onchange="editarCeldaNomina(${idx}, 'descIncid', this.value)"></td>
           <td><input type="number" step="0.01" class="editable-cell" value="${row.isr}" onchange="editarCeldaNomina(${idx}, 'isr', this.value)"></td>
           <td><input type="number" step="0.01" class="editable-cell" value="${row.imss}" onchange="editarCeldaNomina(${idx}, 'imss', this.value)"></td>
           <td><input type="number" step="0.01" class="editable-cell" value="${row.infonavit}" onchange="editarCeldaNomina(${idx}, 'infonavit', this.value)"></td>
           <td><input type="number" step="0.01" class="editable-cell" value="${row.descPrestamo}" onchange="editarCeldaNomina(${idx}, 'descPrestamo', this.value)"></td>
-          <td style="color:var(--success); font-weight:700; font-size:0.95rem;">$${row.neto.toFixed(2)}</td>
+          <td style="color:var(--success); font-weight:700;">$${row.neto.toFixed(2)}</td>
         </tr>
       `).join("");
     }
@@ -1508,7 +2231,7 @@
     function editarCeldaNomina(idx, campo, valor) {
       const r = STATE.preNominaActual[idx];
       r[campo] = parseFloat(valor) || 0;
-      r.neto = Number((r.baseSem + r.bonoSem + r.primaVac - r.descIncid - r.isr - r.imss - r.infonavit - r.descPrestamo).toFixed(2));
+      r.neto = Number((r.baseSem + r.bonoSem + r.horasExtras + r.primaVac - r.descIncid - r.isr - r.imss - r.infonavit - r.descPrestamo).toFixed(2));
       renderTablaPreNomina();
     }
 
@@ -1521,11 +2244,10 @@
       const semana = Number(document.getElementById("nomSemana").value);
       const nomKey = `nom_${anio}_S${semana}`;
 
-      const totalPercepciones = STATE.preNominaActual.reduce((a, r) => a + r.baseSem + r.bonoSem + r.primaVac, 0);
+      const totalPercepciones = STATE.preNominaActual.reduce((a, r) => a + r.baseSem + r.bonoSem + r.horasExtras + r.primaVac, 0);
       const totalDeducciones = STATE.preNominaActual.reduce((a, r) => a + r.descIncid + r.isr + r.imss + r.infonavit + r.descPrestamo, 0);
       const totalNeto = STATE.preNominaActual.reduce((a, r) => a + r.neto, 0);
 
-      // Descontar saldos de préstamos activos automáticamente
       for (const [pk, p] of Object.entries(STATE.prestamos)) {
         if (p.estatus === "Activo" && Number(p.saldoPendiente) > 0) {
           const abono = Math.min(Number(p.saldoPendiente), Number(p.descuentoSemanal));
@@ -1547,7 +2269,7 @@
       });
 
       await cargarTodoDesdeFirebase();
-      alert(`Nómina Semana ${semana} (${anio}) cerrada y guardada. Saldos de préstamos actualizados.`);
+      alert(`Nómina Semana ${semana} (${anio}) cerrada y guardada.`);
     }
 
     function renderHistorialNominas() {
@@ -1571,8 +2293,15 @@
     }
 
     // =========================================================================
-    // MÓDULO 6: RECIBOS DE NÓMINA OFICIALES (ARGUE MATERIALES S.A. DE C.V.)
+    // MÓDULO 7: RECIBOS SEMANAL Y MENSUAL (BONO NO GRAVADO)
     // =========================================================================
+    function cambiarSubtabRecibos(sub, btn) {
+      document.getElementById("subtab-rec-semanal").style.display = sub === "semanal" ? "block" : "none";
+      document.getElementById("subtab-rec-mensual").style.display = sub === "mensual" ? "block" : "none";
+      btn.parentElement.querySelectorAll(".subtab-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+    }
+
     function cargarEmpleadosDeNominaCerrada() {
       const nomKey = document.getElementById("reciboNominaSelect").value;
       const empSel = document.getElementById("reciboEmpSelect");
@@ -1585,15 +2314,15 @@
         detalle.map((d, idx) => `<option value="${idx}">#${d.numero} - ${d.nombre}</option>`).join("");
     }
 
-    function renderReciboPreview() {
+    function renderReciboSemanalPreview() {
       const nomKey = document.getElementById("reciboNominaSelect").value;
       const idx = document.getElementById("reciboEmpSelect").value;
-      const container = document.getElementById("reciboDocumento");
+      const container = document.getElementById("reciboSemanalPaper");
 
       if (!nomKey || idx === "") return;
       const nom = STATE.nominas[nomKey];
       const d = nom.detalle[idx];
-      const totPerc = d.baseSem + d.bonoSem + d.primaVac;
+      const totPerc = d.baseSem + d.bonoSem + (d.horasExtras || 0) + d.primaVac;
       const totDed = d.descIncid + d.isr + d.imss + d.infonavit + d.descPrestamo;
 
       container.innerHTML = `
@@ -1644,14 +2373,14 @@
               <td style="text-align:right;">$${d.imss.toFixed(2)}</td>
             </tr>
             <tr>
-              <td>Prima Vacacional (25%)</td>
-              <td style="text-align:right;">$${d.primaVac.toFixed(2)}</td>
+              <td>Tiempo Extra LFT (Dobles/Triples)</td>
+              <td style="text-align:right;">$${(d.horasExtras || 0).toFixed(2)}</td>
               <td>Descuento INFONAVIT</td>
               <td style="text-align:right;">$${d.infonavit.toFixed(2)}</td>
             </tr>
             <tr>
-              <td></td>
-              <td></td>
+              <td>Vacaciones / Prima Vacacional</td>
+              <td style="text-align:right;">$${d.primaVac.toFixed(2)}</td>
               <td>Descuento Préstamo / Adelanto</td>
               <td style="text-align:right;">$${d.descPrestamo.toFixed(2)}</td>
             </tr>
@@ -1675,7 +2404,7 @@
         </div>
 
         <p style="font-size:0.74rem; color:#475569; margin-top:14px;">
-          Recibí de conformidad de <strong>ARGUE MATERIALES S.A. DE C.V.</strong> la cantidad neta señalada por concepto de salarios y prestaciones devengadas en el periodo indicado, no reservándome acción ni derecho alguno que ejercitar.
+          Recibí de conformidad de <strong>ARGUE MATERIALES S.A. DE C.V.</strong> la cantidad neta señalada por concepto de salarios y prestaciones devengadas en el periodo indicado.
         </p>
 
         <div class="recibo-footer">
@@ -1685,8 +2414,99 @@
       `;
     }
 
+    function renderSelectCortesMensuales() {
+      const sel = document.getElementById("reciboMensualCorteSelect");
+      const cortes = Object.keys(STATE.bonosMensuales).reverse();
+      sel.innerHTML = `<option value="">-- Selecciona Corte Mensual --</option>` +
+        cortes.map(p => `<option value="${p}">Corte Mensual ${p}</option>`).join("");
+    }
+
+    function cargarEmpleadosCorteMensual() {
+      const periodo = document.getElementById("reciboMensualCorteSelect").value;
+      const empSel = document.getElementById("reciboMensualEmpSelect");
+      if (!periodo || !STATE.bonosMensuales[periodo]) {
+        empSel.innerHTML = `<option value="">-- Selecciona Empleado --</option>`;
+        return;
+      }
+      const detalle = STATE.bonosMensuales[periodo].detalle || [];
+      empSel.innerHTML = `<option value="">-- Selecciona Empleado --</option>` +
+        detalle.map((d, idx) => `<option value="${idx}">#${d.numero} - ${d.nombre}</option>`).join("");
+    }
+
+    function renderReciboMensualPreview() {
+      const periodo = document.getElementById("reciboMensualCorteSelect").value;
+      const idx = document.getElementById("reciboMensualEmpSelect").value;
+      if (!periodo || idx === "") return;
+
+      const corte = STATE.bonosMensuales[periodo];
+      const d = corte.detalle[idx];
+
+      document.getElementById("reciboMensualPaper").innerHTML = `
+        <div class="recibo-header">
+          <div>
+            <h2 style="margin:0; font-size:1.25rem;">ARGUE MATERIALES S.A. DE C.V.</h2>
+            <p style="font-size:0.8rem; color:#475569; margin-top:4px;">RECIBO MENSUAL DE BONO DE DESEMPEÑO (NO GRAVADO)</p>
+          </div>
+          <div style="text-align:right; font-size:0.82rem;">
+            <strong>Periodo Mensual:</strong> ${corte.periodo}<br>
+            <strong>Fecha Emisión:</strong> ${corte.fechaEmision}
+          </div>
+        </div>
+
+        <div class="recibo-grid">
+          <div>
+            <strong>No. Empleado:</strong> ${d.numero}<br>
+            <strong>Nombre:</strong> ${d.nombre}<br>
+            <strong>Puesto:</strong> ${d.puesto}
+          </div>
+          <div>
+            <strong>RFC:</strong> ${d.rfc}<br>
+            <strong>CURP:</strong> ${d.curp}<br>
+            <strong>NSS:</strong> ${d.nss}
+          </div>
+        </div>
+
+        <table class="recibo-table">
+          <thead>
+            <tr>
+              <th>CONCEPTO DE PERCEPCIÓN MENSUAL</th>
+              <th style="text-align:right;">IMPORTE NETO</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Bono Mensual Fijo por Desempeño (Exento / No Gravado)</td>
+              <td style="text-align:right;"><strong>$${Number(d.montoBonoMensual).toFixed(2)} MXN</strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div style="text-align:right; font-size:1.15rem; font-weight:700; padding:10px; background:#e2e8f0; border-radius:6px;">
+          TOTAL NETO ENTREGADO: $${Number(d.montoBonoMensual).toFixed(2)} MXN
+        </div>
+
+        <p style="font-size:0.75rem; color:#475569; margin-top:14px;">
+          Recibí de <strong>ARGUE MATERIALES S.A. DE C.V.</strong> el importe íntegro correspondiente al bono mensual del periodo <strong>${corte.periodo}</strong>.
+        </p>
+
+        <div class="recibo-footer">
+          <div class="firma-line">Firma del Empleado</div>
+          <div class="firma-line">Autorización Dirección General</div>
+        </div>
+      `;
+    }
+
+    function imprimirDocumento(elementId) {
+      document.querySelectorAll(".recibo-paper").forEach(el => el.classList.remove("printable-active"));
+      const target = document.getElementById(elementId);
+      if (target) {
+        target.classList.add("printable-active");
+        window.print();
+      }
+    }
+
     // =========================================================================
-    // MÓDULO 7: CALCULADORA FISCAL MX
+    // MÓDULO 8: CALCULADORA Y CONFIGURACIÓN
     // =========================================================================
     function ejecutarCalculadora() {
       const mensual = parseFloat(document.getElementById("calcMensual").value) || 0;
@@ -1700,31 +2520,19 @@
       else if (antiguedad === 4) diasVac = 18;
       else if (antiguedad >= 5) diasVac = 20;
 
-      const anioActual = new Date().getFullYear();
-      const diasEmp = Object.values(STATE.diasEmpresa).filter(d => Number(d.anio) === anioActual).length;
-
-      // Factor integración mínimo LFT: 1 + (15 aguinaldo + (diasVac * 0.25)) / 365
       const factor = 1 + (15 + (diasVac * 0.25)) / 365;
       const sbc = diario * factor;
       const primaVac = diario * diasVac * 0.25;
-
-      // Estimación referencial
-      const isrEst = semanal * 0.085;
-      const imssEst = sbc * 7 * 0.02375;
+      const horaNormal6d = diario / 8;
 
       document.getElementById("calcFactor").value = factor.toFixed(4);
       document.getElementById("calcDiario").value = `$${diario.toFixed(2)}`;
       document.getElementById("calcSbc").value = `$${sbc.toFixed(2)}`;
       document.getElementById("calcSemanal").value = `$${semanal.toFixed(2)}`;
-      document.getElementById("calcVacaciones").value = `${diasVac + diasEmp} días (${diasVac} LFT + ${diasEmp} Emp.)`;
+      document.getElementById("calcHoraExtra").value = `$${(horaNormal6d * 2).toFixed(2)} Doble / $${(horaNormal6d * 3).toFixed(2)} Triple`;
       document.getElementById("calcPrimaVac").value = `$${primaVac.toFixed(2)}`;
-      document.getElementById("calcIsrEst").value = `$${isrEst.toFixed(2)}`;
-      document.getElementById("calcImssEst").value = `$${imssEst.toFixed(2)}`;
     }
 
-    // =========================================================================
-    // MÓDULO 8: CONFIGURACIÓN SIN CÓDIGO (BONOS, DÍAS EMPRESA Y USUARIOS)
-    // =========================================================================
     function renderConfigBonos() {
       const tbody = document.getElementById("tablaConfigBonosBody");
       tbody.innerHTML = Object.entries(STATE.configBonos).map(([cat, r]) => `
